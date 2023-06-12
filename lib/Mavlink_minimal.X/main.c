@@ -44,6 +44,9 @@
 #define RAW 1
 #define SCALED 2
 #define CTS_2_USEC 1  //divide by 2 scaling of counts to usec with right shift
+#define RC_LEFT_WHEEL SERVO_PWM_1
+#define RC_RIGHT_WHEEL SERVO_PWM_2
+#define RC_STEERING SERVO_PWM_3
 
 /*******************************************************************************
  * VARIABLES                                                                   *
@@ -77,8 +80,8 @@ const uint16_t RC_raw_fs_scale = RC_RAW_TO_FS;
 
 RCRX_channel_buffer RC_channels[CHANNELS];
 static struct GPS_data GPS_data;
-struct IMU_output_raw IMU_raw = {0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0}; //container for raw IMU data
-struct IMU_output_raw IMU_scaled = {0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0}; //container for scaled IMU data
+struct IMU_out IMU_raw = {0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0}; //container for raw IMU data
+struct IMU_out IMU_scaled = {0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0}; //container for scaled IMU data
 encoder_t encoder_data[NUM_ENCODERS];
 static uint8_t pub_GPS = TRUE;
 static uint8_t pub_RC_servo = FALSE;
@@ -691,7 +694,7 @@ int main(void) {
     GPS_init();
     RCRX_init(); //initialize the radio control system
     RC_channels_init(); //set channels to midpoint of RC system
-    RC_servo_init(); // start the servo subsystem
+    RC_servo_init(ESC_UNIDIRECTIONAL_TYPE, RC_STEERING); // start the servo subsystem
     IMU_state = IMU_init(IMU_SPI_MODE);
     if (IMU_state == ERROR && IMU_retry > 0) {
         IMU_state = IMU_init(IMU_SPI_MODE);

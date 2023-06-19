@@ -713,16 +713,16 @@ int main(void) {
         cur_time = Sys_timer_get_msec();
         //check for all events
         check_IMU_events(); //check for IMU data ready and publish when available
-        check_encoder_events(); //check for encoder data ready and publish when available
+//        check_encoder_events(); //check for encoder data ready and publish when available
         check_radio_events(); //detect and process MAVLink incoming messages
         check_RC_events(); //check incoming RC commands
-        check_GPS_events(); //check and process incoming GPS messages
+//        check_GPS_events(); //check and process incoming GPS messages
 
         //for now start encoder every ENCODER_PERIOD but publish every CONTROL_PERIOD
-        if (cur_time - encoder_start_time >= ENCODER_PERIOD) {
-            encoder_start_time = cur_time; //reset control loop timer
-            Encoder_start_data_acq(); //initiate Encoder measurement with SPI
-        }
+//        if (cur_time - encoder_start_time >= ENCODER_PERIOD) {
+//            encoder_start_time = cur_time; //reset control loop timer
+//            Encoder_start_data_acq(); //initiate Encoder measurement with SPI
+//        }
 
 
         //publish control and sensor signals
@@ -736,9 +736,9 @@ int main(void) {
             if (pub_IMU == TRUE) {
                 publish_IMU_data(RAW);
             }
-            if (pub_Encoder == TRUE) {
-                publish_encoder_data();
-            }
+//            if (pub_Encoder == TRUE) {
+//                publish_encoder_data();
+//            }
             /*start next data acquisition round*/
             IMU_state = IMU_start_data_acq(); //initiate IMU measurement with SPI
             if (IMU_state == ERROR) {
@@ -750,12 +750,12 @@ int main(void) {
         }
 
         //publish GPS
-        if (cur_time - gps_start_time > GPS_PERIOD) {
-            gps_start_time = cur_time; //reset GPS timer
-            if (pub_GPS == TRUE) {
-                publish_GPS();
-            }
-        }
+//        if (cur_time - gps_start_time > GPS_PERIOD) {
+//            gps_start_time = cur_time; //reset GPS timer
+//            if (pub_GPS == TRUE) {
+//                publish_GPS();
+//            }
+//        }
         //publish heartbeat
         if (cur_time - heartbeat_start_time >= HEARTBEAT_PERIOD) {
             heartbeat_start_time = cur_time; //reset the timer

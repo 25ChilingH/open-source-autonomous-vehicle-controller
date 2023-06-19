@@ -707,4 +707,3 @@ void main(void) {
 
 }
 #endif //GPS_TESTING
-

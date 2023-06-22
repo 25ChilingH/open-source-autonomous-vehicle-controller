@@ -1,9 +1,8 @@
 /*
  * File:   main.c
- * Author: Aaron Hunter
- * Brief:  Minimal application to test MAVLink communication with QGC 
- * project
- * Created on January 27, 2021 at 2:00 pm
+ * Author: Chiling Han
+ * Brief:  Test harness for all peripherals of the OSAVC
+ * Created on June 19, 2023 at 1:00pm
  */
 
 /*******************************************************************************
@@ -34,7 +33,6 @@
 #define SCALED 2
 
 #define GPS_PERIOD 100 //10 Hz update rate
-#define KNOTS_TO_MPS 0.5144444444 //1 meter/second is equal to 1.9438444924406 knots
 
 #define HEARTBEAT_PERIOD 1000 //1 sec interval for hearbeat update
 
@@ -50,13 +48,12 @@ struct IMU_out IMU_raw = {0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0}; //container for raw 
 struct IMU_out IMU_scaled = {0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0}; //container for scaled IMU data
 
 static struct GPS_data GPS_data;
-static float knots_to_mps = KNOTS_TO_MPS;
 
 static uint8_t IMU_test = FALSE;
-static uint8_t GPS_test = FALSE;
+static uint8_t GPS_test = TRUE;
 static uint8_t Servo_test = FALSE;
 static uint8_t Brushless_test = FALSE;
-static uint8_t Radio_test = TRUE;
+static uint8_t Radio_test = FALSE;
 static uint8_t Heartbeat_test = FALSE;
 
 /*******************************************************************************
@@ -202,11 +199,12 @@ void check_GPS_events(void) {
  * @author Aaron Hunter
  */
 void publish_GPS(void) {
-    printf("Lat: %d Lon: %d Speed: %d Heading: %d\r", 
-            (int32_t) (GPS_data.lat * 10000000.0),
-            (int32_t) (GPS_data.lon * 10000000.0),
-            (uint16_t) (GPS_data.spd * knots_to_mps * 100.0),
-            (uint16_t) (GPS_data.cog * 100.0));
+    printf("Fix: %d Lat: %0.6f Lon: %0.6f Speed: %3.3f Heading: %0.6f\r", 
+            (uint8_t) GPS_has_fix(),
+            GPS_data.lat,
+            GPS_data.lon,
+            GPS_data.spd,
+            GPS_data.cog);
 
 }
 
@@ -327,6 +325,7 @@ int main(void) {
     uint8_t error_report = 50;
     
     uint32_t gps_start_time = 0;
+    int i;
     
     uint16_t test_pulse = Brushless_test ? RC_SERVO_MIN_PULSE : RC_SERVO_CENTER_PULSE;
     uint16_t ESC_start_time;

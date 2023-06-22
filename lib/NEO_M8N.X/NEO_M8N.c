@@ -314,7 +314,7 @@ char GPS_has_fix(void) {
  * in GPS
  * author: Aaron Hunter
  */
-char GPS_get_data(struct GPS_data * data) {
+  char GPS_get_data(struct GPS_data * data) {
 
     data->time = RMC_data.time;
     data->lat = RMC_data.lat;
@@ -587,7 +587,7 @@ static int RMC_parse(char* messageID, char* sentence) {
                 break;
             case STATUS:
                 strncpy(RMC.status, field, sizeof (RMC.status));
-                if (RMC.status == "V") {
+                if (strcmp(RMC.status, "V") == 0) {
                     is_data_valid = FALSE;
                 } else {
                     is_data_valid = TRUE;
@@ -680,15 +680,15 @@ void main(void) {
     Board_init();
     Serial_init();
     GPS_init();
-
-    printf("GPS Test Harness, %s, %s", __DATE__, __TIME__);
-
+    
+    int i;
+    printf("GPS Test Harness, %s, %s\r\n", __DATE__, __TIME__);
     while (1) {
 
         if (GPS_is_msg_avail() == TRUE) {
             GPS_parse_stream();
         }
-
+        
         if (GPS_is_data_avail() == TRUE) {
             if (is_data_valid == TRUE) {
                 GPS_get_data(&data);
@@ -700,9 +700,12 @@ void main(void) {
                         " %0.6f\r", data.time, data.lat,
                         data.lon, data.spd, data.cog);
             } else {
-                printf("Data is not valid");
+                printf("Data is not valid\r\n");
             }
         }
+        
+        for (i = 0; i < 100000; i++);
+        
     }
 
 }

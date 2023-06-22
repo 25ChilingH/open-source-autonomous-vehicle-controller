@@ -1,9 +1,13 @@
 /* 
  * File:   NEO_M8N.c
- * Author: Aaron Hunter
  * Brief: Library driver for ublox NEO-M8N GPS receiver
- * Created on 12/09/2020
- * Modified 
+ * 
+ * History
+ * When    Who             What/Why
+ * ------- ------------    ---------
+ * 12/9/20 Aaron Hunter    Created GPS receiver driver file
+ * 6/21/23 Chiling Han     Modify logic for determining satellite fix
+ * 
  */
 
 /*******************************************************************************

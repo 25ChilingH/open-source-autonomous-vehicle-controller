@@ -2,8 +2,12 @@
  * File:   RC_servo.c
  * Author: Aaron Hunter
  * Brief: Library driver for up to four servos for the Max32 dev board
- * Created on 12/18/2020 3;30 pm
- * Modified 
+ *
+ * History
+ * When     Who             What/Why
+ * -------  ------------    ---------
+ * 12/18/20 Aaron Hunter    Created RC_servo driver file
+ * 07/19/23 Chiling Han     Remove brushless motor logic
  */
 
 /*******************************************************************************
@@ -56,7 +60,7 @@ void RC_servo_delay(int cycles);
  * @return SUCCESS or ERROR
  * @brief initializes hardware required and set it to the correct initial setting
  *  */
-int8_t RC_servo_init(uint8_t output_type, uint8_t output_channel) {
+int8_t RC_servo_init(uint8_t output_channel) {
     uint8_t i;
     uint16_t ticks_center = (RC_SERVO_CENTER_PULSE * USEC_NUM) >> USEC_LOG_DEN;
     uint16_t ticks_min = (RC_SERVO_MIN_PULSE * USEC_NUM) >> USEC_LOG_DEN;
@@ -77,13 +81,8 @@ int8_t RC_servo_init(uint8_t output_type, uint8_t output_channel) {
     /* Output Capture configuration*/
     switch (output_channel) {
         case SERVO_PWM_1:
-            if (output_type == RC_SERVO_TYPE || output_type == ESC_BIDIRECTIONAL_TYPE) {
-                pulse_width[SERVO_PWM_1] = RC_SERVO_CENTER_PULSE;
-                raw_ticks[SERVO_PWM_1] = ticks_center;
-            } else {
-                pulse_width[SERVO_PWM_1] = RC_SERVO_MIN_PULSE;
-                raw_ticks[SERVO_PWM_1] = ticks_min;
-            }
+            pulse_width[SERVO_PWM_1] = RC_SERVO_CENTER_PULSE;
+            raw_ticks[SERVO_PWM_1] = ticks_center;
             OC2CON = 0x0000; //Turn off OC3 while doing setup.
             OC2R = 0x0000; // Initialize primary Compare Register
             OC2RS = 0x0000; // Initialize secondary Compare Register
@@ -95,13 +94,8 @@ int8_t RC_servo_init(uint8_t output_type, uint8_t output_channel) {
             printf("OC2RS: %d\r\n", OC2RS);
             OC2CONbits.ON = 1; //turn on the peripheral
         case SERVO_PWM_2:
-            if (output_type == RC_SERVO_TYPE || output_type == ESC_BIDIRECTIONAL_TYPE) {
-                pulse_width[SERVO_PWM_2] = RC_SERVO_CENTER_PULSE;
-                raw_ticks[SERVO_PWM_2] = ticks_center;
-            } else {
-                pulse_width[SERVO_PWM_2] = RC_SERVO_MIN_PULSE;
-                raw_ticks[SERVO_PWM_2] = ticks_min;
-            }
+            pulse_width[SERVO_PWM_2] = RC_SERVO_CENTER_PULSE;
+            raw_ticks[SERVO_PWM_2] = ticks_center;
             OC3CON = 0x0;
             OC3R = 0x0000; // Initialize primary Compare Register
             OC3RS = 0x0000; // Initialize secondary Compare Register
@@ -112,13 +106,8 @@ int8_t RC_servo_init(uint8_t output_type, uint8_t output_channel) {
             OC3RS = raw_ticks[SERVO_PWM_2]; // OCxRS -> OCxR at timer rollover
             OC3CONbits.ON = 1; //turn on the peripheral
         case SERVO_PWM_3:
-            if (output_type == RC_SERVO_TYPE || output_type == ESC_BIDIRECTIONAL_TYPE) {
-                pulse_width[SERVO_PWM_3] = RC_SERVO_CENTER_PULSE;
-                raw_ticks[SERVO_PWM_3] = ticks_center;
-            } else {
-                pulse_width[SERVO_PWM_3] = RC_SERVO_MIN_PULSE;
-                raw_ticks[SERVO_PWM_3] = ticks_min;
-            }
+            pulse_width[SERVO_PWM_3] = RC_SERVO_CENTER_PULSE;
+            raw_ticks[SERVO_PWM_3] = ticks_center;
             OC4CON = 0x0;
             OC4R = 0x0000; // Initialize primary Compare Register
             OC4RS = 0x0000; // Initialize secondary Compare Register
@@ -130,13 +119,8 @@ int8_t RC_servo_init(uint8_t output_type, uint8_t output_channel) {
             OC4CONbits.ON = 1; //turn on the peripheral
 
         case SERVO_PWM_4:
-            if (output_type == RC_SERVO_TYPE || output_type == ESC_BIDIRECTIONAL_TYPE) {
-                pulse_width[SERVO_PWM_4] = RC_SERVO_CENTER_PULSE;
-                raw_ticks[SERVO_PWM_4] = ticks_center;
-            } else {
-                pulse_width[SERVO_PWM_4] = RC_SERVO_MIN_PULSE;
-                raw_ticks[SERVO_PWM_4] = ticks_min;
-            }
+            pulse_width[SERVO_PWM_4] = RC_SERVO_CENTER_PULSE;
+            raw_ticks[SERVO_PWM_4] = ticks_center;
             OC5CON = 0x0;
             OC5R = 0x0000; // Initialize primary Compare Register
             OC5RS = 0x0000; // Initialize secondary Compare Register
@@ -252,10 +236,9 @@ void __ISR(_TIMER_3_VECTOR, ipl6auto) RC_T3_handler(void) {
 #ifdef RCSERVO_TESTING
 
 void main(void) {
-    uint16_t test_pulse = RC_SERVO_MIN_PULSE;
+    uint16_t test_pulse = RC_SERVO_CENTER_PULSE;
     uint16_t start_time;
     uint16_t cur_time;
-    uint16_t ESC_time = 5000;
     uint16_t test_time = 250;
     int direction = 1;
     int DONE_TESTING = FALSE;
@@ -264,18 +247,11 @@ void main(void) {
     Sys_timer_init();
     printf("\r\nRC_servo Test Harness %s %s\r\n", __DATE__, __TIME__);
 
-    RC_servo_init(ESC_UNIDIRECTIONAL_TYPE, SERVO_PWM_1);
-    RC_servo_init(ESC_UNIDIRECTIONAL_TYPE, SERVO_PWM_2);
-    RC_servo_init(ESC_UNIDIRECTIONAL_TYPE, SERVO_PWM_3);
-    RC_servo_init(ESC_UNIDIRECTIONAL_TYPE, SERVO_PWM_4);
+    RC_servo_init(SERVO_PWM_1);
+    RC_servo_init(SERVO_PWM_2);
+    RC_servo_init(SERVO_PWM_3);
+    RC_servo_init(SERVO_PWM_4);
     printf("Exiting init() functions\r\n");
-    start_time = Sys_timer_get_msec();
-    cur_time = start_time;
-    while ((cur_time - start_time) <= ESC_time) {
-        cur_time = Sys_timer_get_msec();
-    }
-
-    printf("ESC delay over\r\n");
 
     while (DONE_TESTING == FALSE) {
         if (RC_servo_cmd_needed() == TRUE) {
@@ -285,7 +261,7 @@ void main(void) {
                 RC_servo_set_pulse(test_pulse, SERVO_PWM_3);
                 RC_servo_set_pulse(test_pulse, SERVO_PWM_4);
                 test_pulse += 10;
-                if (test_pulse > RC_SERVO_CENTER_PULSE) {
+                if (test_pulse > RC_SERVO_MAX_PULSE) {
                     direction = -1;
                 }
             }

@@ -1142,7 +1142,7 @@ int main(void) {
             //                    IMU_data_raw.temp, IMU_data_raw.mag_status);
             //                        IMU_get_norm_data(&IMU_data_scaled);
             IMU_get_scaled_data(&IMU_data_scaled);
-            printf("%+0.3f, %+0.3f, %+0.3f, %+0.3f, %+0.3f, %+0.3f, %+0.3f, %+0.3f, %+0.3f, %0.1f, %x\r\n",
+            printf("a %+0.3f, %+0.3f, %+0.3f, g %+0.3f, %+0.3f, %+0.3f, m %+0.3f, %+0.3f, %+0.3f, temp %0.1f, m_status %x\r\n",
                     (float) IMU_data_scaled.acc.x, (float) IMU_data_scaled.acc.y, (float) IMU_data_scaled.acc.z,
                     (float) IMU_data_scaled.gyro.x, (float) IMU_data_scaled.gyro.y, (float) IMU_data_scaled.gyro.z,
                     (float) (IMU_data_scaled.mag.x), (float) (IMU_data_scaled.mag.y), (float) (IMU_data_scaled.mag.z),

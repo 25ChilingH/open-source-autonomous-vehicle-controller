@@ -3,24 +3,15 @@
     <type>com.microchip.mplab.nbide.embedded.makeproject</type>
     <configuration>
         <data xmlns="http://www.netbeans.org/ns/make-project/1">
-            <name>Test_harness</name>
-            <creation-uuid>02835bf4-e4cc-440b-a647-2d1fd7208861</creation-uuid>
+            <name>RC_ESC</name>
+            <creation-uuid>bc70c933-1d7b-478b-97c7-2097c60a6d83</creation-uuid>
             <make-project-type>0</make-project-type>
             <sourceEncoding>ISO-8859-1</sourceEncoding>
             <make-dep-projects/>
             <sourceRootList>
                 <sourceRootElem>../Board.X</sourceRootElem>
                 <sourceRootElem>../Serial.X</sourceRootElem>
-                <sourceRootElem>../ICM-20948.X</sourceRootElem>
                 <sourceRootElem>../System_timer.X</sourceRootElem>
-                <sourceRootElem>../NEO_M8N.X</sourceRootElem>
-                <sourceRootElem>.</sourceRootElem>
-                <sourceRootElem>../RC_servo.X</sourceRootElem>
-                <sourceRootElem>../Radio_serial.X</sourceRootElem>
-                <sourceRootElem>../../modules/c_library_v2/common</sourceRootElem>
-                <sourceRootElem>../AS5047D.X</sourceRootElem>
-                <sourceRootElem>../RC_RX.X</sourceRootElem>
-                <sourceRootElem>../RC_ESC.X</sourceRootElem>
             </sourceRootList>
             <confList>
                 <confElem>

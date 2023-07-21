@@ -13,10 +13,16 @@
       <itemPath>../Radio_serial.X/Radio_serial.h</itemPath>
       <itemPath>../../modules/c_library_v2/common/mavlink.h</itemPath>
       <itemPath>../RC_RX.X/RC_RX.h</itemPath>
+      <itemPath>../RC_ESC.X/RC_ESC.h</itemPath>
     </logicalFolder>
     <logicalFolder name="LinkerScript"
                    displayName="Linker Files"
                    projectFiles="true">
+    </logicalFolder>
+    <logicalFolder name="ScriptFiles"
+                   displayName="Script Files"
+                   projectFiles="true">
+      <itemPath>autoload.py</itemPath>
     </logicalFolder>
     <logicalFolder name="SourceFiles"
                    displayName="Source Files"
@@ -30,6 +36,7 @@
       <itemPath>../Radio_serial.X/Radio_serial.c</itemPath>
       <itemPath>main.c</itemPath>
       <itemPath>../RC_RX.X/RC_RX.c</itemPath>
+      <itemPath>../RC_ESC.X/RC_ESC.c</itemPath>
     </logicalFolder>
     <logicalFolder name="ExternalFiles"
                    displayName="Important Files"
@@ -49,6 +56,7 @@
     <Elem>../../modules/c_library_v2/common</Elem>
     <Elem>../AS5047D.X</Elem>
     <Elem>../RC_RX.X</Elem>
+    <Elem>../RC_ESC.X</Elem>
   </sourceRootList>
   <projectmakefile>Makefile</projectmakefile>
   <confs>
@@ -102,7 +110,7 @@
         <property key="enable-unroll-loops" value="false"/>
         <property key="exclude-floating-point" value="false"/>
         <property key="extra-include-directories"
-                  value="../Board.X;../Radio_serial.X;../../modules/c_library_v2;../../modules/c_library_v2/common;../System_timer.X;../Serial.X;../NEO_M8N.X;../RC_RX.X;../ICM-20948.X;../AS5047D.X;../RC_servo.X"/>
+                  value="../Board.X;../Radio_serial.X;../../modules/c_library_v2;../../modules/c_library_v2/common;../System_timer.X;../Serial.X;../NEO_M8N.X;../RC_RX.X;../ICM-20948.X;../AS5047D.X;../RC_servo.X;../RC_ESC.X"/>
         <property key="generate-16-bit-code" value="false"/>
         <property key="generate-micro-compressed-code" value="false"/>
         <property key="isolate-each-function" value="false"/>
@@ -281,6 +289,7 @@
         <property key="debugoptions.debug-startup" value="Use system settings"/>
         <property key="debugoptions.reset-behaviour" value="Use system settings"/>
         <property key="debugoptions.useswbreakpoints" value="false"/>
+        <property key="firmware.download.all" value="false"/>
         <property key="hwtoolclock.frcindebug" value="false"/>
         <property key="memories.aux" value="false"/>
         <property key="memories.bootflash" value="true"/>

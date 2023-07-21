@@ -49,3 +49,8 @@
 /lib/Radio_serial.X/build/
 /lib/RC_RX.X/build/
 /lib/NEO_M8N.X/build/
+/Quadcopter/Controller/Quad_passthrough.X/build/
+/lib/ICM-20948.X/build/
+/lib/Serial.X/build/
+/lib/RC_ESC.X/build/
+/lib/RC_ESC.X/dist/

@@ -491,7 +491,7 @@ int main(void) {
     int16_t vel_right;
     int16_t phi; // steering angle
     int16_t dphi_dt; //angular velocity of steering servo
-    encoder_t enc_data[NUM_ENCODERS];
+//    encoder_t enc_data[NUM_ENCODERS];
 
 
     Board_init();
@@ -499,21 +499,20 @@ int main(void) {
     printf("\r\nAS5047D Encoder Test Harness %s, %s\r\n", __DATE__, __TIME__);
     Encoder_init();
 
-    for (index = 0; index < NUM_ENCODERS; index++) {
-        Encoder_init_encoder_data(&enc_data[index]);
-    }
-
     while (1) {
         Encoder_start_data_acq();
         if (Encoder_is_data_ready() == TRUE) {
-            Encoder_get_data(enc_data);
-            printf("L: %6d, %6d; R: %6d, %6d, S: %6d, %6d\r",
-                    enc_data[LEFT_MOTOR].next_theta,
-                    enc_data[LEFT_MOTOR].omega,
-                    enc_data[RIGHT_MOTOR].next_theta,
-                    enc_data[RIGHT_MOTOR].omega,
-                    enc_data[HEADING].next_theta,
-                    enc_data[HEADING].omega);
+            Encoder_get_data(encoder_data);
+            if (NUM_ENCODERS > 0) {
+                printf("L: %6d, %6d", Encoder_get_angle(LEFT_MOTOR), Encoder_get_velocity(LEFT_MOTOR));
+            }
+            if (NUM_ENCODERS > 1) {
+                printf("; R: %6d, %6d", Encoder_get_angle(RIGHT_MOTOR), Encoder_get_velocity(RIGHT_MOTOR));
+            }
+            if (NUM_ENCODERS > 2) {
+                printf("; S: %6d, %6d", Encoder_get_angle(HEADING), Encoder_get_velocity(HEADING));
+            }
+            printf("\r");
         }
         delay(150000);
     }

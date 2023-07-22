@@ -260,7 +260,7 @@ void main(void) {
                 RC_servo_set_pulse(test_pulse, SERVO_PWM_2);
                 RC_servo_set_pulse(test_pulse, SERVO_PWM_3);
                 RC_servo_set_pulse(test_pulse, SERVO_PWM_4);
-                test_pulse += 10;
+                test_pulse += 50;
                 if (test_pulse > RC_SERVO_MAX_PULSE) {
                     direction = -1;
                 }
@@ -270,7 +270,7 @@ void main(void) {
                 RC_servo_set_pulse(test_pulse, SERVO_PWM_2);
                 RC_servo_set_pulse(test_pulse, SERVO_PWM_3);
                 RC_servo_set_pulse(test_pulse, SERVO_PWM_4);
-                test_pulse -= 10;
+                test_pulse -= 50;
                 if (test_pulse < RC_SERVO_MIN_PULSE) {
                     direction = 1;
                     DONE_TESTING = TRUE;

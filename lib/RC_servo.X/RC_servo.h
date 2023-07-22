@@ -24,9 +24,9 @@
  * PUBLIC #DEFINES                                                            *
  ******************************************************************************/
 
-#define RC_SERVO_MIN_PULSE 1000
-#define RC_SERVO_CENTER_PULSE 1500
-#define RC_SERVO_MAX_PULSE 2000
+#define RC_SERVO_MIN_PULSE 544
+#define RC_SERVO_CENTER_PULSE 1472
+#define RC_SERVO_MAX_PULSE 2400
 #define RC_SERVO_NUM_OUTPUTS 4
 
 

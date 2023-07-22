@@ -54,3 +54,5 @@
 /lib/Serial.X/build/
 /lib/RC_ESC.X/build/
 /lib/RC_ESC.X/dist/
+/lib/AS5047D.X/build/
+/lib/Garmin_LIDAR_V3HP.X/build/

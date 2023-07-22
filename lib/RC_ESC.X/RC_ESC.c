@@ -104,7 +104,7 @@ int8_t RC_ESC_init(uint8_t output_type, uint8_t output_channel) {
             OC3R = 0x0000; // Initialize primary Compare Register
             OC3RS = 0x0000; // Initialize secondary Compare Register
             OC3CONbits.OC32 = 0; //16 bit mode
-            OC2CONbits.OCTSEL = 0; //use timer 2
+            OC3CONbits.OCTSEL = 0; //use timer 2
             OC3CONbits.OCM = 0b110; // PWM mode, no fault detection
             OC3R = raw_ticks[BRUSHLESS_PWM_2]; // need load this register initially 
             OC3RS = raw_ticks[BRUSHLESS_PWM_2]; // OCxRS -> OCxR at timer rollover
@@ -121,7 +121,7 @@ int8_t RC_ESC_init(uint8_t output_type, uint8_t output_channel) {
             OC4R = 0x0000; // Initialize primary Compare Register
             OC4RS = 0x0000; // Initialize secondary Compare Register
             OC4CONbits.OC32 = 0; //16 bit mode
-            OC2CONbits.OCTSEL = 0; //use timer 2
+            OC4CONbits.OCTSEL = 0; //use timer 2
             OC4CONbits.OCM = 0b110; // PWM mode, no fault detection
             OC4R = raw_ticks[BRUSHLESS_PWM_3]; // need load this register initially 
             OC4RS = raw_ticks[BRUSHLESS_PWM_3]; // OCxRS -> OCxR at timer rollover
@@ -139,7 +139,7 @@ int8_t RC_ESC_init(uint8_t output_type, uint8_t output_channel) {
             OC5R = 0x0000; // Initialize primary Compare Register
             OC5RS = 0x0000; // Initialize secondary Compare Register
             OC5CONbits.OC32 = 0; //16 bit mode
-            OC2CONbits.OCTSEL = 0; //use timer 2
+            OC5CONbits.OCTSEL = 0; //use timer 2
             OC5CONbits.OCM = 0b110; // PWM mode, no fault detection
             OC5R = raw_ticks[BRUSHLESS_PWM_4]; // need load this register initially 
             OC5RS = raw_ticks[BRUSHLESS_PWM_4]; // OCxRS -> OCxR at timer rollover

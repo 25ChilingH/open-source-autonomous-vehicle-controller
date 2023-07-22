@@ -52,7 +52,7 @@ static struct GPS_data GPS_data;
 
 static uint8_t IMU_test = FALSE;
 static uint8_t GPS_test = FALSE;
-static uint8_t Servo_test = FALSE;
+static uint8_t Servo_test = TRUE;
 static uint8_t Unidirectional_test = TRUE;
 static uint8_t Radio_test = FALSE;
 static uint8_t Heartbeat_test = FALSE;
@@ -360,8 +360,6 @@ int main(void) {
     if (GPS_test == TRUE) GPS_init();
     
     if (Servo_test == TRUE) {
-        RC_servo_init(SERVO_PWM_1);
-        RC_servo_init(SERVO_PWM_2);
         RC_servo_init(SERVO_PWM_3);
         RC_servo_init(SERVO_PWM_4);
     } // start the servo subsystem
@@ -369,8 +367,6 @@ int main(void) {
     if (Unidirectional_test == TRUE) {
         RC_ESC_init(ESC_UNIDIRECTIONAL_TYPE, BRUSHLESS_PWM_1);
         RC_ESC_init(ESC_UNIDIRECTIONAL_TYPE, BRUSHLESS_PWM_2);
-        RC_ESC_init(ESC_UNIDIRECTIONAL_TYPE, BRUSHLESS_PWM_3);
-        RC_ESC_init(ESC_UNIDIRECTIONAL_TYPE, BRUSHLESS_PWM_4);
         ESC_start_time = Sys_timer_get_msec();
         ESC_cur_time = ESC_start_time;
         while ((ESC_cur_time - ESC_start_time) <= ESC_time) {
@@ -409,8 +405,6 @@ int main(void) {
             if (Servo_test == TRUE || Unidirectional_test == TRUE) {
                 if (Servo_test == TRUE) {
                     if (direction == 1) {
-                        RC_servo_set_pulse(test_pulse, SERVO_PWM_1);
-                        RC_servo_set_pulse(test_pulse, SERVO_PWM_2);
                         RC_servo_set_pulse(test_pulse, SERVO_PWM_3);
                         RC_servo_set_pulse(test_pulse, SERVO_PWM_4);
                         test_pulse += 10;
@@ -419,8 +413,6 @@ int main(void) {
                         }
                     }
                     if (direction == -1) {
-                        RC_servo_set_pulse(test_pulse, SERVO_PWM_1);
-                        RC_servo_set_pulse(test_pulse, SERVO_PWM_2);
                         RC_servo_set_pulse(test_pulse, SERVO_PWM_3);
                         RC_servo_set_pulse(test_pulse, SERVO_PWM_4);
                         test_pulse -= 10;
@@ -428,8 +420,6 @@ int main(void) {
                             direction = 1;
                         }
                     }
-                    printf("SERVO_PWM_1: %d, current ticks: %d \r\n", RC_servo_get_pulse(SERVO_PWM_1), RC_servo_get_raw_ticks(SERVO_PWM_1));
-                    printf("SERVO_PWM_2: %d, current ticks: %d \r\n", RC_servo_get_pulse(SERVO_PWM_2), RC_servo_get_raw_ticks(SERVO_PWM_2));
                     printf("SERVO_PWM_3: %d, current ticks: %d \r\n", RC_servo_get_pulse(SERVO_PWM_3), RC_servo_get_raw_ticks(SERVO_PWM_3));
                     printf("SERVO_PWM_4: %d, current ticks: %d \r\n", RC_servo_get_pulse(SERVO_PWM_4), RC_servo_get_raw_ticks(SERVO_PWM_4));
                 }
@@ -438,8 +428,6 @@ int main(void) {
                     if (direction == 1) {
                         RC_ESC_set_pulse(test_pulse, BRUSHLESS_PWM_1);
                         RC_ESC_set_pulse(test_pulse, BRUSHLESS_PWM_2);
-                        RC_ESC_set_pulse(test_pulse, BRUSHLESS_PWM_3);
-                        RC_ESC_set_pulse(test_pulse, BRUSHLESS_PWM_4);
                         test_pulse += 50;
                         if (test_pulse > RC_SERVO_CENTER_PULSE) {
                             direction = -1;
@@ -448,8 +436,6 @@ int main(void) {
                     if (direction == -1) {
                         RC_ESC_set_pulse(test_pulse, BRUSHLESS_PWM_1);
                         RC_ESC_set_pulse(test_pulse, BRUSHLESS_PWM_2);
-                        RC_ESC_set_pulse(test_pulse, BRUSHLESS_PWM_3);
-                        RC_ESC_set_pulse(test_pulse, BRUSHLESS_PWM_4);
                         test_pulse -= 50;
                         if (test_pulse < RC_SERVO_MIN_PULSE) {
                             direction = 1;
@@ -458,8 +444,6 @@ int main(void) {
                     
                     printf("UNIDIRECTIONAL_PWM_1: %d, current ticks: %d \r\n", RC_ESC_get_pulse(BRUSHLESS_PWM_1), RC_ESC_get_raw_ticks(BRUSHLESS_PWM_1));
                     printf("UNIDIRECTIONAL_PWM_2: %d, current ticks: %d \r\n", RC_ESC_get_pulse(BRUSHLESS_PWM_2), RC_ESC_get_raw_ticks(BRUSHLESS_PWM_2));
-                    printf("UNIDIRECTIONAL_PWM_3: %d, current ticks: %d \r\n", RC_ESC_get_pulse(BRUSHLESS_PWM_3), RC_ESC_get_raw_ticks(BRUSHLESS_PWM_3));
-                    printf("UNIDIRECTIONAL_PWM_4: %d, current ticks: %d \r\n", RC_ESC_get_pulse(BRUSHLESS_PWM_4), RC_ESC_get_raw_ticks(BRUSHLESS_PWM_4));
                 
                 }
                 

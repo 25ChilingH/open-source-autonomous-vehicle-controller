@@ -137,6 +137,15 @@ uint16_t Lidar_get_range(void) {
     return LIDAR_distance;
 }
 
+/**
+ * @Function Lidar_get_I2C_error(void)
+ * @return if there's an I2C error
+ * @author Chiling
+ */
+int8_t Lidar_get_I2C_error(void) {
+    return I2C_error;
+}
+
 /*******************************************************************************
  * PRIVATE FUNCTION IMPLEMENTATIONS                                            *
  ******************************************************************************/

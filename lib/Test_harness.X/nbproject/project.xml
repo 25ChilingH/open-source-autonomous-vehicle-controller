@@ -21,6 +21,7 @@
                 <sourceRootElem>../AS5047D.X</sourceRootElem>
                 <sourceRootElem>../RC_RX.X</sourceRootElem>
                 <sourceRootElem>../RC_ESC.X</sourceRootElem>
+                <sourceRootElem>../Garmin_LIDAR_V3HP.X</sourceRootElem>
             </sourceRootList>
             <confList>
                 <confElem>

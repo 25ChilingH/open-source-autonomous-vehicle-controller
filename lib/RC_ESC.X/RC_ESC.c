@@ -68,7 +68,7 @@ int8_t RC_ESC_init(uint8_t output_type, uint8_t output_channel) {
     PR2 = 12499; //5 msec <=> 200 Hz; period = PB_CLOCK_FREQ / prescaler / 
     /*setup timer2 interrupt on period rollover*/
     IPC2bits.T2IP = 0b110; //priority 6
-    IPC2bits.T2IS = 0b01; // subpriority 1
+    IPC2bits.T2IS = 0b10; // subpriority 2
     IFS0bits.T2IF = 0; // clear interrupt flag
     IEC0bits.T2IE = 1; //enable interrupt
 
@@ -92,6 +92,7 @@ int8_t RC_ESC_init(uint8_t output_type, uint8_t output_channel) {
             OC2RS = raw_ticks[BRUSHLESS_PWM_2]; // OCxRS -> OCxR at timer rollover
             printf("OC2RS: %d\r\n", OC2RS);
             OC2CONbits.ON = 1; //turn on the peripheral
+            break;
         case BRUSHLESS_PWM_2:
             if (output_type == ESC_BIDIRECTIONAL_TYPE) {
                 pulse_width[BRUSHLESS_PWM_2] = RC_ESC_CENTER_PULSE;
@@ -109,6 +110,7 @@ int8_t RC_ESC_init(uint8_t output_type, uint8_t output_channel) {
             OC3R = raw_ticks[BRUSHLESS_PWM_2]; // need load this register initially 
             OC3RS = raw_ticks[BRUSHLESS_PWM_2]; // OCxRS -> OCxR at timer rollover
             OC3CONbits.ON = 1; //turn on the peripheral
+            break;
         case BRUSHLESS_PWM_3:
             if (output_type == ESC_BIDIRECTIONAL_TYPE) {
                 pulse_width[BRUSHLESS_PWM_3] = RC_ESC_CENTER_PULSE;
@@ -126,7 +128,7 @@ int8_t RC_ESC_init(uint8_t output_type, uint8_t output_channel) {
             OC4R = raw_ticks[BRUSHLESS_PWM_3]; // need load this register initially 
             OC4RS = raw_ticks[BRUSHLESS_PWM_3]; // OCxRS -> OCxR at timer rollover
             OC4CONbits.ON = 1; //turn on the peripheral
-
+            break;
         case BRUSHLESS_PWM_4:
             if (output_type == ESC_BIDIRECTIONAL_TYPE) {
                 pulse_width[BRUSHLESS_PWM_4] = RC_ESC_CENTER_PULSE;
@@ -144,6 +146,7 @@ int8_t RC_ESC_init(uint8_t output_type, uint8_t output_channel) {
             OC5R = raw_ticks[BRUSHLESS_PWM_4]; // need load this register initially 
             OC5RS = raw_ticks[BRUSHLESS_PWM_4]; // OCxRS -> OCxR at timer rollover
             OC5CONbits.ON = 1; //turn on the peripheral
+            break;
         default:
             break;
     }

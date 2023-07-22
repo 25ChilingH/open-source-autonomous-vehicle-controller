@@ -93,6 +93,7 @@ int8_t RC_servo_init(uint8_t output_channel) {
             OC2RS = raw_ticks[SERVO_PWM_1]; // OCxRS -> OCxR at timer rollover
             printf("OC2RS: %d\r\n", OC2RS);
             OC2CONbits.ON = 1; //turn on the peripheral
+            break;
         case SERVO_PWM_2:
             pulse_width[SERVO_PWM_2] = RC_SERVO_CENTER_PULSE;
             raw_ticks[SERVO_PWM_2] = ticks_center;
@@ -105,6 +106,7 @@ int8_t RC_servo_init(uint8_t output_channel) {
             OC3R = raw_ticks[SERVO_PWM_2]; // need load this register initially 
             OC3RS = raw_ticks[SERVO_PWM_2]; // OCxRS -> OCxR at timer rollover
             OC3CONbits.ON = 1; //turn on the peripheral
+            break;
         case SERVO_PWM_3:
             pulse_width[SERVO_PWM_3] = RC_SERVO_CENTER_PULSE;
             raw_ticks[SERVO_PWM_3] = ticks_center;
@@ -117,7 +119,7 @@ int8_t RC_servo_init(uint8_t output_channel) {
             OC4R = raw_ticks[SERVO_PWM_3]; // need load this register initially 
             OC4RS = raw_ticks[SERVO_PWM_3]; // OCxRS -> OCxR at timer rollover
             OC4CONbits.ON = 1; //turn on the peripheral
-
+            break;
         case SERVO_PWM_4:
             pulse_width[SERVO_PWM_4] = RC_SERVO_CENTER_PULSE;
             raw_ticks[SERVO_PWM_4] = ticks_center;
@@ -130,6 +132,7 @@ int8_t RC_servo_init(uint8_t output_channel) {
             OC5R = raw_ticks[SERVO_PWM_4]; // need load this register initially 
             OC5RS = raw_ticks[SERVO_PWM_4]; // OCxRS -> OCxR at timer rollover
             OC5CONbits.ON = 1; //turn on the peripheral
+            break;
         default:
             break;
     }

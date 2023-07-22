@@ -14,6 +14,7 @@
       <itemPath>../../modules/c_library_v2/common/mavlink.h</itemPath>
       <itemPath>../RC_RX.X/RC_RX.h</itemPath>
       <itemPath>../RC_ESC.X/RC_ESC.h</itemPath>
+      <itemPath>../Garmin_LIDAR_V3HP.X/Garmin_v3hp.h</itemPath>
     </logicalFolder>
     <logicalFolder name="LinkerScript"
                    displayName="Linker Files"
@@ -37,6 +38,7 @@
       <itemPath>main.c</itemPath>
       <itemPath>../RC_RX.X/RC_RX.c</itemPath>
       <itemPath>../RC_ESC.X/RC_ESC.c</itemPath>
+      <itemPath>../Garmin_LIDAR_V3HP.X/Garmin_v3hp.c</itemPath>
     </logicalFolder>
     <logicalFolder name="ExternalFiles"
                    displayName="Important Files"
@@ -57,6 +59,7 @@
     <Elem>../AS5047D.X</Elem>
     <Elem>../RC_RX.X</Elem>
     <Elem>../RC_ESC.X</Elem>
+    <Elem>../Garmin_LIDAR_V3HP.X</Elem>
   </sourceRootList>
   <projectmakefile>Makefile</projectmakefile>
   <confs>
@@ -110,7 +113,7 @@
         <property key="enable-unroll-loops" value="false"/>
         <property key="exclude-floating-point" value="false"/>
         <property key="extra-include-directories"
-                  value="../Board.X;../Radio_serial.X;../../modules/c_library_v2;../../modules/c_library_v2/common;../System_timer.X;../Serial.X;../NEO_M8N.X;../RC_RX.X;../ICM-20948.X;../AS5047D.X;../RC_servo.X;../RC_ESC.X"/>
+                  value="../Board.X;../Radio_serial.X;../../modules/c_library_v2;../../modules/c_library_v2/common;../System_timer.X;../Serial.X;../NEO_M8N.X;../RC_RX.X;../ICM-20948.X;../AS5047D.X;../RC_servo.X;../RC_ESC.X;../Garmin_LIDAR_V3HP.X"/>
         <property key="generate-16-bit-code" value="false"/>
         <property key="generate-micro-compressed-code" value="false"/>
         <property key="isolate-each-function" value="false"/>
@@ -289,7 +292,6 @@
         <property key="debugoptions.debug-startup" value="Use system settings"/>
         <property key="debugoptions.reset-behaviour" value="Use system settings"/>
         <property key="debugoptions.useswbreakpoints" value="false"/>
-        <property key="firmware.download.all" value="false"/>
         <property key="hwtoolclock.frcindebug" value="false"/>
         <property key="memories.aux" value="false"/>
         <property key="memories.bootflash" value="true"/>
@@ -338,7 +340,7 @@
         <property key="oscillator.rcfrequency" value="250"/>
         <property key="oscillator.rcfrequencyunit" value="Kilo"/>
         <property key="periphADC1.altscl" value="false"/>
-        <property key="periphADC1.minTacq" value=""/>
+        <property key="periphADC1.minTacq" value="132"/>
         <property key="periphADC1.tacqunits" value="microseconds"/>
         <property key="periphADC2.altscl" value="false"/>
         <property key="periphADC2.minTacq" value=""/>
@@ -850,6 +852,7 @@
         <property key="debugoptions.debug-startup" value="Use system settings"/>
         <property key="debugoptions.reset-behaviour" value="Use system settings"/>
         <property key="debugoptions.useswbreakpoints" value="false"/>
+        <property key="firmware.download.all" value="false"/>
         <property key="hwtoolclock.frcindebug" value="false"/>
         <property key="lastid" value=""/>
         <property key="memories.aux" value="false"/>
@@ -872,7 +875,7 @@
         <property key="oscillator.rcfrequency" value="250"/>
         <property key="oscillator.rcfrequencyunit" value="Kilo"/>
         <property key="periphADC1.altscl" value="false"/>
-        <property key="periphADC1.minTacq" value=""/>
+        <property key="periphADC1.minTacq" value="132"/>
         <property key="periphADC1.tacqunits" value="microseconds"/>
         <property key="periphADC2.altscl" value="false"/>
         <property key="periphADC2.minTacq" value=""/>

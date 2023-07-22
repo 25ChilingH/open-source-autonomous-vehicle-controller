@@ -23,6 +23,7 @@
 #include "Radio_serial.h"
 #include "RC_RX.h"
 #include "RC_ESC.h"
+#include "Garmin_v3hp.h"
 
 /*******************************************************************************
  * #DEFINES                                                                    *
@@ -36,6 +37,8 @@
 #define GPS_PERIOD 100 //10 Hz update rate
 
 #define HEARTBEAT_PERIOD 1000 //1 sec interval for hearbeat update
+
+#define TEN_HZ 100000
 
 /*******************************************************************************
  * VARIABLES                                                                   *
@@ -52,10 +55,12 @@ static struct GPS_data GPS_data;
 
 static uint8_t IMU_test = FALSE;
 static uint8_t GPS_test = FALSE;
-static uint8_t Servo_test = TRUE;
-static uint8_t Unidirectional_test = TRUE;
+static uint8_t Servo_test = FALSE;
+static uint8_t Unidirectional_test = FALSE;
+static uint8_t Bidirectional_test = FALSE;
 static uint8_t Radio_test = FALSE;
-static uint8_t Heartbeat_test = FALSE;
+static uint8_t Telemetry_test = FALSE;
+static uint8_t Lidar_test = FALSE;
 
 /*******************************************************************************
  * TYPEDEFS                                                                    *
@@ -152,7 +157,7 @@ void check_IMU_events(void) {
  */
 void publish_IMU_data(uint8_t data_type) {
     if (data_type == RAW) {
-        printf("a: %d %d %d g: %d %d %d m: %d %d %d \r",
+        printf("a: %+0.1f %+0.1f %+0.1f g: %+0.1f %+0.1f %+0.1f m: %+0.1f %+0.1f %+0.1f \r",
                 IMU_raw.acc.x,
                 IMU_raw.acc.y,
                 IMU_raw.acc.z, 
@@ -163,7 +168,7 @@ void publish_IMU_data(uint8_t data_type) {
                 IMU_raw.mag.x,
                 IMU_raw.mag.z);
     } else if (data_type == SCALED) {
-                printf("a: %d %d %d g: %d %d %d m: %d %d %d \r",
+                printf("a: %+0.3f %+0.3f %+0.3f g: %+0.3f %+0.3f %+0.3f m: %+0.3f %+0.3f %+0.3f \r",
                 IMU_scaled.acc.x,
                 IMU_scaled.acc.y,
                 IMU_scaled.acc.z, 
@@ -319,25 +324,8 @@ int main(void) {
     uint32_t cur_time = 0;
     uint32_t warmup_time = 250; //time in ms to allow subsystems to stabilize (IMU))
     uint32_t control_start_time = 0;
+    char c;
     
-    int8_t IMU_state = ERROR;
-    int8_t IMU_retry = 5;
-    uint32_t IMU_error = 0;
-    uint8_t error_report = 50;
-    
-    uint32_t gps_start_time = 0;
-    
-    uint16_t test_pulse = Unidirectional_test ? RC_SERVO_MIN_PULSE : RC_SERVO_CENTER_PULSE;
-    uint16_t ESC_start_time;
-    uint16_t ESC_cur_time;
-    uint16_t ESC_time = 5000;
-    uint16_t ESC_test_time = 250;
-    int direction = 1;
-
-    uint32_t heartbeat_start_time = 0;
-    
-    RCRX_channel_buffer servo_data[CHANNELS];
-
     //Initialization routines
     Board_init(); //board configuration
     Serial_init(); //start debug terminal (USB)
@@ -348,6 +336,65 @@ int main(void) {
         cur_time = Sys_timer_get_msec();
     }
     
+    printf("\r\nChoose the peripherals that you would like to test: \r\n");
+    printf("For IMU, type i \r\n");
+    printf("For GPS, type g \r\n");
+    printf("For DC brushless unidirectional motors, type u (PWM output channel 1) \r\n");
+    printf("For DC brushless bidirectional motors, type b (PWM output channel 2) \r\n");
+    printf("For servo motors, type s (PWM output channels 3 and 4) \r\n");
+    printf("For radio controller, type c \r\n");
+    printf("For telemetry radio, type t \r\n");
+    printf("For LIDAR, type l \r\n");
+    printf("Press q to quit \r\n");
+    printf("**********************************************\r\n");
+    
+    while (1) {
+        if (c = get_char()) {
+            put_char(c);
+        }
+        if (c == 'i' || c == 'I') IMU_test = TRUE;
+        if (c == 'g' || c == 'G') GPS_test = TRUE;
+        if (c == 'u' || c == 'U') Unidirectional_test = TRUE;
+        if (c == 'b' || c == 'B') Bidirectional_test = TRUE;
+        if (c == 's' || c == 'S') Servo_test = TRUE;
+        if (c == 'c' || c == 'C') Radio_test = TRUE;
+        if (c == 't' || c == 'T') Telemetry_test = TRUE;
+        if (c == 'l' || c == 'L') Lidar_test = TRUE;
+        if (c == 'q' || c == 'Q') break;
+    }
+    
+    printf("\r\n");
+    
+    int8_t IMU_state = ERROR;
+    int8_t IMU_retry = 5;
+    uint32_t IMU_error = 0;
+    uint8_t error_report = 50;
+    
+    uint32_t gps_start_time = 0;
+    
+    uint16_t uni_test_pulse;
+    uint16_t bi_test_pulse;
+    uint16_t servo_test_pulse;
+    if (Unidirectional_test) uni_test_pulse = RC_ESC_MIN_PULSE;
+    if (Bidirectional_test) bi_test_pulse = RC_ESC_CENTER_PULSE;
+    if (Servo_test) servo_test_pulse = RC_SERVO_CENTER_PULSE;  
+    
+    uint16_t ESC_start_time;
+    uint16_t ESC_cur_time;
+    uint16_t ESC_time = 5000;
+    uint16_t ESC_test_time = 250;
+    int uni_direction = 1;
+    int bi_direction = 1;
+    int servo_direction = 1;
+
+    RCRX_channel_buffer servo_data[CHANNELS];
+
+    uint32_t heartbeat_start_time = 0;
+    
+    int startTime;
+    int loopTime = TEN_HZ;
+    uint16_t range;
+ 
     if (IMU_test == TRUE) {
         IMU_state = IMU_init(IMU_SPI_MODE);
         if (IMU_state == ERROR && IMU_retry > 0) {
@@ -359,14 +406,11 @@ int main(void) {
 
     if (GPS_test == TRUE) GPS_init();
     
-    if (Servo_test == TRUE) {
-        RC_servo_init(SERVO_PWM_3);
-        RC_servo_init(SERVO_PWM_4);
-    } // start the servo subsystem
-
-    if (Unidirectional_test == TRUE) {
-        RC_ESC_init(ESC_UNIDIRECTIONAL_TYPE, BRUSHLESS_PWM_1);
-        RC_ESC_init(ESC_UNIDIRECTIONAL_TYPE, BRUSHLESS_PWM_2);
+    if (Unidirectional_test == TRUE || Bidirectional_test == TRUE) {
+        if (Unidirectional_test)
+            RC_ESC_init(ESC_UNIDIRECTIONAL_TYPE, BRUSHLESS_PWM_1);
+        if (Bidirectional_test)
+            RC_ESC_init(ESC_BIDIRECTIONAL_TYPE, BRUSHLESS_PWM_2);
         ESC_start_time = Sys_timer_get_msec();
         ESC_cur_time = ESC_start_time;
         while ((ESC_cur_time - ESC_start_time) <= ESC_time) {
@@ -374,9 +418,24 @@ int main(void) {
         }
     }
     
+    if (Servo_test == TRUE) {
+        RC_servo_init(SERVO_PWM_3);
+        RC_servo_init(SERVO_PWM_4);
+    } // start the servo subsystem
+
+    
     if (Radio_test == TRUE) RCRX_init();
     
-    if (Heartbeat_test == TRUE) Radio_serial_init();
+    if (Telemetry_test == TRUE) Radio_serial_init();
+    
+    if (Lidar_test == TRUE) {
+        Lidar_Init();
+        startTime = Sys_timer_get_msec();
+        /*Need to specify a warm-up time of 22msec before taking the first measurement*/
+        while (Sys_timer_get_msec() < startTime + 22) {
+            ;
+        }
+    }
     
     printf("\r\nTest Harness %s, %s \r\n", __DATE__, __TIME__);
 
@@ -402,53 +461,67 @@ int main(void) {
                 }
             }
             
-            if (Servo_test == TRUE || Unidirectional_test == TRUE) {
-                if (Servo_test == TRUE) {
-                    if (direction == 1) {
-                        RC_servo_set_pulse(test_pulse, SERVO_PWM_3);
-                        RC_servo_set_pulse(test_pulse, SERVO_PWM_4);
-                        test_pulse += 10;
-                        if (test_pulse > RC_SERVO_MAX_PULSE) {
-                            direction = -1;
+            if (Servo_test == TRUE || Unidirectional_test == TRUE || Bidirectional_test == TRUE) {
+                if (Unidirectional_test == TRUE) {
+                    if (uni_direction == 1) {
+                        RC_ESC_set_pulse(uni_test_pulse, BRUSHLESS_PWM_1);
+                        uni_test_pulse += 10;
+                        if (uni_test_pulse > RC_ESC_CENTER_PULSE) {
+                            uni_direction = -1;
                         }
                     }
-                    if (direction == -1) {
-                        RC_servo_set_pulse(test_pulse, SERVO_PWM_3);
-                        RC_servo_set_pulse(test_pulse, SERVO_PWM_4);
-                        test_pulse -= 10;
-                        if (test_pulse < RC_SERVO_MIN_PULSE) {
-                            direction = 1;
+                    if (uni_direction == -1) {
+                        RC_ESC_set_pulse(uni_test_pulse, BRUSHLESS_PWM_1);
+                        uni_test_pulse -= 10;
+                        if (uni_test_pulse < RC_ESC_MIN_PULSE) {
+                            uni_direction = 1;
+                        }
+                    }
+                    
+                    printf("UNIDIRECTIONAL_PWM_1: %d, current ticks: %d \r\n", RC_ESC_get_pulse(BRUSHLESS_PWM_1), RC_ESC_get_raw_ticks(BRUSHLESS_PWM_1));
+                }
+                
+                if (Bidirectional_test == TRUE) {
+                    if (bi_direction == 1) {
+                        RC_ESC_set_pulse(bi_test_pulse, BRUSHLESS_PWM_2);
+                        bi_test_pulse += 10;
+                        if (bi_test_pulse > RC_ESC_MAX_PULSE) {
+                            bi_direction = -1;
+                        }
+                    }
+                    if (bi_direction == -1) {
+                        RC_ESC_set_pulse(bi_test_pulse, BRUSHLESS_PWM_2);
+                        bi_test_pulse -= 10;
+                        if (bi_test_pulse < RC_ESC_MIN_PULSE) {
+                            bi_direction = 1;
+                        }
+                    }
+                    printf("BIDIRECTIONAL_PWM_2: %d, current ticks: %d \r\n", RC_ESC_get_pulse(BRUSHLESS_PWM_2), RC_ESC_get_raw_ticks(BRUSHLESS_PWM_2));   
+                }
+                
+                if (Servo_test == TRUE) {
+                    if (servo_direction == 1) {
+                        RC_servo_set_pulse(servo_test_pulse, SERVO_PWM_3);
+                        RC_servo_set_pulse(servo_test_pulse, SERVO_PWM_4);
+                        servo_test_pulse += 50;
+                        if (servo_test_pulse > RC_SERVO_MAX_PULSE) {
+                            servo_direction = -1;
+                        }
+                    }
+                    if (servo_direction == -1) {
+                        RC_servo_set_pulse(servo_test_pulse, SERVO_PWM_3);
+                        RC_servo_set_pulse(servo_test_pulse, SERVO_PWM_4);
+                        servo_test_pulse -= 50;
+                        if (servo_test_pulse < RC_SERVO_MIN_PULSE) {
+                            servo_direction = 1;
                         }
                     }
                     printf("SERVO_PWM_3: %d, current ticks: %d \r\n", RC_servo_get_pulse(SERVO_PWM_3), RC_servo_get_raw_ticks(SERVO_PWM_3));
                     printf("SERVO_PWM_4: %d, current ticks: %d \r\n", RC_servo_get_pulse(SERVO_PWM_4), RC_servo_get_raw_ticks(SERVO_PWM_4));
                 }
                 
-                if (Unidirectional_test == TRUE) {
-                    if (direction == 1) {
-                        RC_ESC_set_pulse(test_pulse, BRUSHLESS_PWM_1);
-                        RC_ESC_set_pulse(test_pulse, BRUSHLESS_PWM_2);
-                        test_pulse += 50;
-                        if (test_pulse > RC_SERVO_CENTER_PULSE) {
-                            direction = -1;
-                        }
-                    }
-                    if (direction == -1) {
-                        RC_ESC_set_pulse(test_pulse, BRUSHLESS_PWM_1);
-                        RC_ESC_set_pulse(test_pulse, BRUSHLESS_PWM_2);
-                        test_pulse -= 50;
-                        if (test_pulse < RC_SERVO_MIN_PULSE) {
-                            direction = 1;
-                        }
-                    }
-                    
-                    printf("UNIDIRECTIONAL_PWM_1: %d, current ticks: %d \r\n", RC_ESC_get_pulse(BRUSHLESS_PWM_1), RC_ESC_get_raw_ticks(BRUSHLESS_PWM_1));
-                    printf("UNIDIRECTIONAL_PWM_2: %d, current ticks: %d \r\n", RC_ESC_get_pulse(BRUSHLESS_PWM_2), RC_ESC_get_raw_ticks(BRUSHLESS_PWM_2));
                 
-                }
-                
-                
-                if (Unidirectional_test == TRUE) {
+                if (Unidirectional_test == TRUE || Bidirectional_test == TRUE) {
                     ESC_start_time = Sys_timer_get_msec();
                     ESC_cur_time = ESC_start_time;
                     while ((ESC_cur_time - ESC_start_time) <= ESC_test_time) {
@@ -487,13 +560,33 @@ int main(void) {
             }
         }
         
-        if (Heartbeat_test == TRUE) {
+        if (Telemetry_test == TRUE) {
                 //publish heartbeat
             if (cur_time - heartbeat_start_time >= HEARTBEAT_PERIOD) {
                 heartbeat_start_time = cur_time; //reset the timer
                 publish_heartbeat();
             }
+            
+            if(Radio_data_available() == TRUE){
+                c = Radio_get_char();
+                Radio_put_char(c); //send via the radio
+                put_char(c); //send over USB/debug also
+            }
         }
+        
+        if (Lidar_test == TRUE) {
+            startTime = Sys_timer_get_usec();
+
+            if (Sys_timer_get_usec() > startTime + loopTime) {
+                startTime = Sys_timer_get_usec();
+                range = Lidar_get_range();
+                printf("Range: %d cm\r\n", range);
+                if(Lidar_get_I2C_error() == TRUE){
+                    printf("I2C Error \r\n");
+                }
+            }
+        }
+        
 
 
     }

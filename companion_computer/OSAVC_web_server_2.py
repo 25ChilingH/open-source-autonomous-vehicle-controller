@@ -48,7 +48,10 @@ def MAVlogging():
     global MAVstatus
     global btn1
     t = '{:%Y%m%d-%H%M%S}'.format(datetime.now())
-    csv_file = '/mnt/usb/logfiles/log_' + t + '.csv'
+    dirname = './mnt/usb/logfiles/'
+    csv_file = dirname+ 'log_' + t + '.csv'
+    os.makedirs(dirname, exist_ok=True)
+
 # first find all the incoming messages:
     msgs_dict = {}
     start_time = time.time()
@@ -93,27 +96,34 @@ def MAVlogging():
 
 
 def timelapse():  # continuous shooting
+    # open webcam
     cam = cv2.VideoCapture(0)
     print('timelapse mode on')
-    # for filename in enumerate(cam.capture_continuous('/mnt/usb/images/img{timestamp:%Y%m%d-%H%M%S}.jpg')):
-    #     print('snap taken')
-    #     print(btn1, btn2)
-    #     print(filename)
-        # shutil.copyfile(filename,'/mnt/usb/images/filename')
-        # shutil.copyfile(filename,'/home/pi/Flask/static/latest.jpg')
-    if btn1 != 's':
-        cam.release()
-        print('timelapse mode off')
+    dirname = './mnt/usb/images/'
+    os.makedirs(dirname, exist_ok=True)
+    while btn1 == 's':
+        t = '{:%Y%m%d-%H%M%S}'.format(datetime.now())
+        filename = dirname+'img'+t+'.jpg'
+        stream_ok, frame = cam.read()
+        if stream_ok:
+            cv2.imwrite(filename, frame)
+        print('snap taken')
+        print(btn1, btn2)
+        shutil.copyfile(filename,'./static/latest.jpg')
+    cam.release()
+    print('timelapse mode off') 
 
 
 def video():  # record video stream
     # open webcam
     cam = cv2.VideoCapture(0)
     # define video codec
-    videoCodec = VideoWriter.fourcc(*'YUYV')
+    videoCodec = VideoWriter.fourcc(*'MJPG')
     t = '{:%Y%m%d-%H%M%S}'.format(datetime.now())
     # create video file and store on USB drive
-    video = VideoWriter('/mnt/usb/video/vid' + t + '.avi', videoCodec, 10/1, (640, 480))
+    dirname = './mnt/usb/video/'
+    os.makedirs(dirname, exist_ok=True)
+    video = VideoWriter(dirname+'vid' + t + '.avi', videoCodec, 10/1, (int(cam.get(3)), int(cam.get(4))))
     while btn1 == 'v':
         print(btn1, btn2)
         # read camera frame
@@ -130,17 +140,18 @@ def snapstart():  # take pictures on demand
     cam = cv2.VideoCapture(0)
     print('entered snapshot mode')
     global btn2
+    dirname = './mnt/usb/images/'
+    os.makedirs(dirname, exist_ok=True)
     while btn1 == 'q':
         time.sleep(0.1)
         if btn2 == 'a':
             print('taken snap: btn2 =' + btn2)
             t = '{:%Y%m%d-%H%M%S}'.format(datetime.now())
-            filename = '/mnt/usb/images/img'+t+'.jpg'
+            filename = dirname+'img'+t+'.jpg'
             stream_ok, frame = cam.read()
             if stream_ok:
                 cv2.imwrite(filename, frame)
-                shutil.copyfile(filename, '/mnt/usb/latest/latest.jpg')
-                shutil.copyfile(filename, 'static/latest.jpg')
+                shutil.copyfile(filename, './static/latest.jpg')
             btn2 = 'o'
             print('btn2 =' + btn2)
     # clean up stream

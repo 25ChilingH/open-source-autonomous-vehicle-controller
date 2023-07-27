@@ -491,8 +491,7 @@ int main(void) {
     int16_t vel_right;
     int16_t phi; // steering angle
     int16_t dphi_dt; //angular velocity of steering servo
-//    encoder_t enc_data[NUM_ENCODERS];
-
+    char name[] = "LRH";
 
     Board_init();
     Serial_init();
@@ -503,16 +502,9 @@ int main(void) {
         Encoder_start_data_acq();
         if (Encoder_is_data_ready() == TRUE) {
             Encoder_get_data(encoder_data);
-            if (NUM_ENCODERS > 0) {
-                printf("L: %6d, %6d", Encoder_get_angle(LEFT_MOTOR), Encoder_get_velocity(LEFT_MOTOR));
+            for (int i = 0; i < NUM_ENCODERS; i++) {
+                printf("%c: %6d, %6d\r", name[i], Encoder_get_angle(i), Encoder_get_velocity(i));
             }
-            if (NUM_ENCODERS > 1) {
-                printf("; R: %6d, %6d", Encoder_get_angle(RIGHT_MOTOR), Encoder_get_velocity(RIGHT_MOTOR));
-            }
-            if (NUM_ENCODERS > 2) {
-                printf("; S: %6d, %6d", Encoder_get_angle(HEADING), Encoder_get_velocity(HEADING));
-            }
-            printf("\r");
         }
         delay(150000);
     }

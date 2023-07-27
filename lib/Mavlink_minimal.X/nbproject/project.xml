@@ -23,6 +23,7 @@
                 <sourceRootElem>../ICM-20948.X</sourceRootElem>
                 <sourceRootElem>../AS5047D.X</sourceRootElem>
                 <sourceRootElem>../RC_servo.X</sourceRootElem>
+                <sourceRootElem>../RC_ESC.X</sourceRootElem>
             </sourceRootList>
             <confList>
                 <confElem>

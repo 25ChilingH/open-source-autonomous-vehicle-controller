@@ -24,6 +24,7 @@
 #include "RC_servo.h"
 #include "ICM_20948.h"
 #include "AS5047D.h"
+#include "RC_ESC.h"
 
 
 
@@ -694,7 +695,7 @@ int main(void) {
     GPS_init();
     RCRX_init(); //initialize the radio control system
     RC_channels_init(); //set channels to midpoint of RC system
-    RC_servo_init(ESC_UNIDIRECTIONAL_TYPE, RC_STEERING); // start the servo subsystem
+    RC_ESC_init(ESC_UNIDIRECTIONAL_TYPE, RC_STEERING); // start the servo subsystem
     IMU_state = IMU_init(IMU_SPI_MODE);
     if (IMU_state == ERROR && IMU_retry > 0) {
         IMU_state = IMU_init(IMU_SPI_MODE);

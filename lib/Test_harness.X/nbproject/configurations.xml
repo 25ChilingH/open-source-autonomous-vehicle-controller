@@ -15,6 +15,7 @@
       <itemPath>../RC_RX.X/RC_RX.h</itemPath>
       <itemPath>../RC_ESC.X/RC_ESC.h</itemPath>
       <itemPath>../Garmin_LIDAR_V3HP.X/Garmin_v3hp.h</itemPath>
+      <itemPath>../AS5047D.X/AS5047D.h</itemPath>
     </logicalFolder>
     <logicalFolder name="LinkerScript"
                    displayName="Linker Files"
@@ -39,6 +40,7 @@
       <itemPath>../RC_RX.X/RC_RX.c</itemPath>
       <itemPath>../RC_ESC.X/RC_ESC.c</itemPath>
       <itemPath>../Garmin_LIDAR_V3HP.X/Garmin_v3hp.c</itemPath>
+      <itemPath>../AS5047D.X/AS5047D.c</itemPath>
     </logicalFolder>
     <logicalFolder name="ExternalFiles"
                    displayName="Important Files"
@@ -113,7 +115,7 @@
         <property key="enable-unroll-loops" value="false"/>
         <property key="exclude-floating-point" value="false"/>
         <property key="extra-include-directories"
-                  value="../Board.X;../Radio_serial.X;../../modules/c_library_v2;../../modules/c_library_v2/common;../System_timer.X;../Serial.X;../NEO_M8N.X;../RC_RX.X;../ICM-20948.X;../AS5047D.X;../RC_servo.X;../RC_ESC.X;../Garmin_LIDAR_V3HP.X"/>
+                  value="../Board.X;../Radio_serial.X;../../modules/c_library_v2;../Serial.X;../NEO_M8N.X;../AS5047D.X;../ICM-20948.X;../AS5047D.X;../RC_servo.X;../RC_ESC.X;../Garmin_LIDAR_V3HP.X;../System_timer.X;../RC_RX.X"/>
         <property key="generate-16-bit-code" value="false"/>
         <property key="generate-micro-compressed-code" value="false"/>
         <property key="isolate-each-function" value="false"/>
@@ -179,7 +181,7 @@
         <property key="generate-16-bit-code" value="false"/>
         <property key="generate-cross-reference-file" value="false"/>
         <property key="generate-micro-compressed-code" value="false"/>
-        <property key="heap-size" value="8000"/>
+        <property key="heap-size" value="0"/>
         <property key="input-libraries" value=""/>
         <property key="kseg-length" value=""/>
         <property key="kseg-origin" value=""/>

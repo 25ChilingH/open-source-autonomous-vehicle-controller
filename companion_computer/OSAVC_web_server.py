@@ -40,7 +40,9 @@ def MAVlogging():
     global MAVstatus
     global btn1
     t='{:%Y%m%d-%H%M%S}'.format(datetime.now())
-    csv_file = '/mnt/usb/logfiles/log_' + t + '.csv'
+    dirname = './mnt/usb/logfiles/'
+    csv_file = dirname+ 'log_' + t + '.csv'
+    os.makedirs(dirname, exist_ok=True)
 # first find all the incoming messages:
     msgs_dict = {}
     start_time = time.time()
@@ -86,12 +88,13 @@ def MAVlogging():
 def timelapse():  # continuous shooting
     cam = PiCamera()
     cam.resolution = (1640,922)
-    for filename in enumerate(cam.capture_continuous('/mnt/usb/images/img{timestamp:%Y%m%d-%H%M%S}.jpg')):
+    dirname = './mnt/usb/images/'
+    os.makedirs(dirname, exist_ok=True)
+    for filename in enumerate(cam.capture_continuous(dirname+'img{timestamp:%Y%m%d-%H%M%S}.jpg')):
         print('snap taken')
         print(btn1,btn2)
         print(filename)
-        #shutil.copyfile(filename,'/mnt/usb/images/filename')
-        #shutil.copyfile(filename,'/home/pi/Flask/static/latest.jpg')
+        shutil.copyfile(filename,'./static/latest.jpg')
         if btn1 != 's':
             break
     cam.close()
@@ -100,8 +103,10 @@ def timelapse():  # continuous shooting
 def video(): # record a video
     cam = PiCamera()
     t='{:%Y%m%d-%H%M%S}'.format(datetime.now())
+    dirname = './mnt/usb/video/'
+    os.makedirs(dirname, exist_ok=True)
     cam.resolution = (640,480)
-    cam.start_recording('/mnt/usb/video/vid'+t+'.h264')
+    cam.start_recording(dirname+ 'vid'+t+'.h264')
     while btn1 == 'v':
         print(btn1,btn2)
         pass
@@ -114,15 +119,16 @@ def snapstart(): # take pictures on demand
     cam.resolution = (1640,922)
     print('entered snapshot mode')
     global btn2
+    dirname = './mnt/usb/images/'
+    os.makedirs(dirname, exist_ok=True)
     while btn1 == 'q':
         time.sleep(0.1)
         if btn2 == 'a':
             print('taken snap: btn2 =' + btn2)
             t='{:%Y%m%d-%H%M%S}'.format(datetime.now())
-            filename = '/mnt/usb/images/img'+t+'.jpg'
+            filename = dirname+'img'+t+'.jpg'
             cam.capture(filename)
-            shutil.copyfile(filename,'/mnt/usb/latest/latest.jpg')
-            shutil.copyfile(filename,'/home/pi/Flask/static/latest.jpg')
+            shutil.copyfile(filename,'./static/latest.jpg')
             btn2 = 'o'
             print('btn2 =' + btn2)
 

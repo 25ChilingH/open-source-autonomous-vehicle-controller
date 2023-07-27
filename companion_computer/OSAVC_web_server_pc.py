@@ -18,6 +18,7 @@ app = Flask(__name__)
 app.config['SEND_FILE_MAX_AGE_DEFAULT'] = 1
 MAVstatus = 'Disconnected'
 Datalogging = False
+pdir = './logs/'
 
 
 def connectMAV():
@@ -48,7 +49,7 @@ def MAVlogging():
     global MAVstatus
     global btn1
     t = '{:%Y%m%d-%H%M%S}'.format(datetime.now())
-    dirname = './mnt/usb/logfiles/'
+    dirname = pdir + '/logfiles/'
     csv_file = dirname+ 'log_' + t + '.csv'
     os.makedirs(dirname, exist_ok=True)
 
@@ -99,7 +100,7 @@ def timelapse():  # continuous shooting
     # open webcam
     cam = cv2.VideoCapture(0)
     print('timelapse mode on')
-    dirname = './mnt/usb/images/'
+    dirname = pdir + '/images/'
     os.makedirs(dirname, exist_ok=True)
     while btn1 == 's':
         t = '{:%Y%m%d-%H%M%S}'.format(datetime.now())
@@ -121,7 +122,7 @@ def video():  # record video stream
     videoCodec = VideoWriter.fourcc(*'MJPG')
     t = '{:%Y%m%d-%H%M%S}'.format(datetime.now())
     # create video file and store on USB drive
-    dirname = './mnt/usb/video/'
+    dirname = pdir + '/video/'
     os.makedirs(dirname, exist_ok=True)
     video = VideoWriter(dirname+'vid' + t + '.avi', videoCodec, 10/1, (int(cam.get(3)), int(cam.get(4))))
     while btn1 == 'v':
@@ -140,7 +141,7 @@ def snapstart():  # take pictures on demand
     cam = cv2.VideoCapture(0)
     print('entered snapshot mode')
     global btn2
-    dirname = './mnt/usb/images/'
+    dirname = pdir + '/images/'
     os.makedirs(dirname, exist_ok=True)
     while btn1 == 'q':
         time.sleep(0.1)
@@ -158,7 +159,6 @@ def snapstart():  # take pictures on demand
     cam.release()
     print('exiting snaphot mode')
 
-
 # we are able to make two different requests on our webpage
 # GET = we just type in the url
 # POST = some sort of form submission like a button
@@ -174,11 +174,14 @@ def hello_world():
     message = 'All good'
     global MAVstatus
     global Datalogging
+    global pdir
 
     # if we make a post request on the webpage aka press button then do stuff
     if request.method == 'POST':
-
         # if we press the turn on button
+        if request.form['submit'] == 'Enter directory':
+            pdir = request.form['projectDir']
+            print(pdir)
         if request.form['submit'] == 'Video':
             print('BP: Recording video')
             status = 'video'

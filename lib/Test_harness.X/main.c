@@ -52,7 +52,7 @@ static struct GPS_data GPS_data;
 
 RCRX_channel_buffer RC_channels[CHANNELS];
 
-encoder_t encoder_data[NUM_ENCODERS];
+static encoder_t encoder_data[NUM_ENCODERS];
 
 static uint8_t IMU_test = FALSE;
 static uint8_t GPS_test = FALSE;
@@ -502,24 +502,53 @@ int main(void) {
     printf("For heartbeat over USB, type h \r\n");
     printf("For LIDAR, type l \r\n");
     printf("For encoders, type e \r\n");
-    printf("Press q to quit \r\n");
     printf("**********************************************\r\n");
 
     while (1) {
         if (c = get_char()) {
             put_char(c);
         }
-        if (c == 'i' || c == 'I') IMU_test = TRUE;
-        if (c == 'g' || c == 'G') GPS_test = TRUE;
-        if (c == 'u' || c == 'U') Unidirectional_test = TRUE;
-        if (c == 'b' || c == 'B') Bidirectional_test = TRUE;
-        if (c == 's' || c == 'S') Servo_test = TRUE;
-        if (c == 'c' || c == 'C') Radio_test = TRUE;
-        if (c == 't' || c == 'T') Telemetry_test = TRUE;
-        if (c == 'h' || c == 'H') Heartbeat_test = TRUE;
-        if (c == 'l' || c == 'L') Lidar_test = TRUE;
-        if (c == 'e' || c == 'E') Encoder_test = TRUE;
-        if (c == 'q' || c == 'Q') break;
+        if (c == 'i' || c == 'I') {
+            IMU_test = TRUE;
+            break;
+        }
+        if (c == 'g' || c == 'G') {
+            GPS_test = TRUE;
+            break;
+        }
+        if (c == 'u' || c == 'U') {
+            Unidirectional_test = TRUE;
+            break;
+        }
+        if (c == 'b' || c == 'B') {
+            Bidirectional_test = TRUE;
+            break;
+        }
+        if (c == 's' || c == 'S') {
+            Servo_test = TRUE;
+            break;
+        }
+        if (c == 'c' || c == 'C') {
+            Radio_test = TRUE;
+            break;
+        }
+        if (c == 't' || c == 'T') {
+            Telemetry_test = TRUE;
+            break;
+        }
+        if (c == 'h' || c == 'H') {
+            Heartbeat_test = TRUE;
+            break;
+        }
+        if (c == 'l' || c == 'L') {
+            Lidar_test = TRUE;
+            break;
+        }
+        if (c == 'e' || c == 'E') {
+            Encoder_test = TRUE;
+            break;
+        }
+        if (c == '\r') break;
     }
 
     printf("\r\n");
@@ -596,10 +625,6 @@ int main(void) {
 
     if (Encoder_test == TRUE) {
         Encoder_init();
-        //initialize encoder data
-        for (uint8_t index = 0; index < NUM_ENCODERS; index++) {
-            Encoder_init_encoder_data(&encoder_data[index]);
-        }
     }
 
     printf("\r\nTest Harness %s, %s \r\n", __DATE__, __TIME__);

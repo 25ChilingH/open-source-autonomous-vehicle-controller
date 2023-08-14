@@ -4,7 +4,7 @@ sys.path.append('/home/rover_pi/.local/lib/python3.9/site-packages')
 
 import cv2
 from cv2 import VideoWriter
-from flask import Flask, render_template, request, redirect, url_for
+from flask import Flask, render_template, request, redirect, url_for, Response
 import time
 import os
 import shutil
@@ -12,6 +12,7 @@ from datetime import datetime, timedelta
 from threading import Thread
 from pymavlink import mavutil
 import csv
+from PositioningSystem_raspi.yolov5.detect import ObjectDetector
 
 
 app = Flask(__name__)
@@ -19,7 +20,7 @@ app.config['SEND_FILE_MAX_AGE_DEFAULT'] = 1
 MAVstatus = 'Disconnected'
 Datalogging = False
 pdir = './logs/'
-
+detector = ObjectDetector()
 
 def connectMAV():
     global master
@@ -131,12 +132,27 @@ def video():  # record video stream
         stream_ok, frame = cam.read()
         if stream_ok:
             video.write(frame)
+            ret, buffer = cv2.imencode('.jpg', frame)
+            frame = buffer.tobytes()
+            yield (b'--frame\r\n'
+                   b'Content-Type: image/jpeg\r\n\r\n' + frame + b'\r\n')
     # clean up streams
     cam.release()
     video.release()
     print('video thread stopped')
 
+@app.route('/video_feed') 
+def video_feed(): 
+   """Video streaming route. Put this in the src attribute of an img tag.""" 
+   return Response(video(), 
+                   mimetype='multipart/x-mixed-replace; boundary=frame')
 
+@app.route('/detect_feed') 
+def detect_feed():
+   if btn1 == 'd':
+       return Response(detector.run(weights='./PositioningSystem/weights/bestv4-int8_edgetpu.tflite'), 
+                       mimetype='multipart/x-mixed-replace; boundary=frame')
+   
 def snapstart():  # take pictures on demand
     cam = cv2.VideoCapture(-1, cv2.CAP_V4L)
     print('entered snapshot mode')
@@ -182,12 +198,12 @@ def hello_world():
         if request.form['submit'] == 'Enter directory':
             pdir = request.form['projectDir']
             print(pdir)
-        if request.form['submit'] == 'Video':
+        elif request.form['submit'] == 'Video':
             print('BP: Recording video')
             status = 'video'
             btn1 = 'v'
-            t2 = Thread(target=video)
-            t2.start()
+            # t2 = Thread(target=video)
+            # t2.start()
             message = 'All good'
         elif request.form['submit'] == 'Video Off':
             print('BP: Video off')
@@ -244,6 +260,18 @@ def hello_world():
             status = 'Error'
             message = 'Enable QuickSnap first'
             btn1 = 'o'
+        elif request.form['submit'] == 'Detect':
+            print('BP: Running detection')
+            status = 'Detect mode'
+            btn1 = 'd'
+            # t6 = Thread(target=detect_feed)
+            # t6.start()
+            message = 'All good'
+        elif request.form['submit'] == 'Detect Off':
+            print('BP: Detect off')
+            status = 'Idle'
+            btn1 = 'o'
+            message = 'All good'
         else:
             pass
 

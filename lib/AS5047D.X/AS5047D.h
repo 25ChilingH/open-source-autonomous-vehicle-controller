@@ -29,7 +29,6 @@ typedef enum {
     LEFT_MOTOR,
     RIGHT_MOTOR,
     HEADING,
-    PAN,
 } encoder_enum_t;
 
 typedef struct encoder {

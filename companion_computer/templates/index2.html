@@ -114,38 +114,51 @@
         <input class="button_off" type="submit" name="submit" value="Connected">
         {% else %}
         <input class="button" type="submit" name="submit" value="Connect MAV">
-        {%endif %}
+        {% endif %}
         {% if btn1 == 'datalog' %}
         <input class="button_off" type="submit" name="submit" value="Stop logging">
         {% else %}
         <input class="button" type="submit" name="submit" value="Start logging">
-        {%endif %}
+        {% endif %}
       </p>
       <p>
           {% if btn1 == 'v' %}
           <input class="button_off" type="submit" name="submit" value="Video Off">
           {% else %}
            <input class="button" type="submit" name="submit" value="Video">
-          {%endif %}
+          {% endif %}
           {% if btn1 == 's' %}
           <input class="button_off" type="submit" name="submit" value="Stills Off">
           {% else %}
           <input class="button" type="submit" name="submit" value="Stills">
-          {%endif %}
+          {% endif %}
           {% if btn1 == 'q' %}
           <input class="button_off" type="submit" name="submit" value="QuickSnap Off">
           {% else %}
           <input class="button" type="submit" name="submit" value="QuickSnap">
-          {%endif %}
+          {% endif %}
           {% if btn1 == 'q' %}
           <input class="button" type="submit" name="submit" value="Take">
           {% else %}
           <input class="button_dis" type="submit" name="submit" value="_Take_">
-          {%endif %}
+          {% endif %}
+      </p>
+      <p>
+        {% if btn1 == 'd' %}
+        <input class="button_off" type="submit" name="submit" value="Detect Off">
+        {% else %}
+        <input class="button" type="submit" name="submit" value="Detect">
+        {% endif %}
       </p>
         </form>
-        <p>Latest image:</p>
+        <p>Latest:</p>
+        {% if btn1 == 'v' %}
+        <img src="{{ url_for('video_feed') }}" width="480" height="287" alt="Stream">
+        {% elif btn1 == 'd' %}
+        <img src="{{ url_for('detect_feed') }}" width="416" height="416" alt="Object Detection">
+        {% else %}
         <img src="../static/latest.jpg" width="480" height="287" alt="Last">
+        {% endif %}
 	</article>
 
 

@@ -149,7 +149,7 @@ def video_feed():
 @app.route('/detect_feed') 
 def detect_feed():
    if btn1 == 'd':
-       return Response(detector.run(), 
+       return Response(detector.run_generator(), 
                        mimetype='multipart/x-mixed-replace; boundary=frame')
 
 def snapstart():  # take pictures on demand

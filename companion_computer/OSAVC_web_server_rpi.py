@@ -118,7 +118,7 @@ def timelapse():  # continuous shooting
 
 def video():  # record video stream
     # open webcam
-    cam = cv2.VideoCapture(-1, cv2.CAP_V4L)
+    cam = cv2.VideoCapture(0)
     # define video codec
     videoCodec = VideoWriter.fourcc(*'MJPG')
     t = '{:%Y%m%d-%H%M%S}'.format(datetime.now())
@@ -150,7 +150,7 @@ def video_feed():
 @app.route('/detect_feed') 
 def detect_feed():
    if btn1 == 'd':
-       return Response(detector.run(weights='./PositioningSystem/weights/bestv4-int8_edgetpu.tflite'), 
+       return Response(detector.run_generator(weights='./PositioningSystem_raspi/weights/bestv4-int8_edgetpu.tflite'), 
                        mimetype='multipart/x-mixed-replace; boundary=frame')
    
 def snapstart():  # take pictures on demand
@@ -296,5 +296,4 @@ if __name__ == "__main__":
     # let's launch our webpage!
     # do 0.0.0.0 so that we can log into this webpage
     # using another computer on the same network later
-    # specify port 80 rather than default 5000
-    app.run(host='0.0.0.0', port=80, debug=True)
+    app.run(host='0.0.0.0', port=5000, debug=True)

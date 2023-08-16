@@ -118,7 +118,7 @@ def timelapse():  # continuous shooting
 
 def video():  # record video stream
     # open webcam
-    cam = cv2.VideoCapture(0)
+    cam = cv2.VideoCapture(-1, cv2.CAP_V4L)
     # define video codec
     videoCodec = VideoWriter.fourcc(*'MJPG')
     t = '{:%Y%m%d-%H%M%S}'.format(datetime.now())
@@ -269,6 +269,7 @@ def hello_world():
             message = 'All good'
         elif request.form['submit'] == 'Detect Off':
             print('BP: Detect off')
+            detector.stop()
             status = 'Idle'
             btn1 = 'o'
             message = 'All good'

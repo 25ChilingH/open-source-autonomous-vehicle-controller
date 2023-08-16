@@ -201,7 +201,7 @@ def hello_world():
             print('BP: Recording video')
             status = 'video'
             btn1 = 'v'
-            # t2 = Thread(target=video, args=(True,))
+            # t2 = Thread(target=video)
             # t2.start()
             message = 'All good'
         elif request.form['submit'] == 'Video Off':

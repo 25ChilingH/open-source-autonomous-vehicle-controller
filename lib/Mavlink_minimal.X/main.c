@@ -45,9 +45,9 @@
 #define RAW 1
 #define SCALED 2
 #define CTS_2_USEC 1  //divide by 2 scaling of counts to usec with right shift
-#define RC_LEFT_WHEEL SERVO_PWM_1
-#define RC_RIGHT_WHEEL SERVO_PWM_2
-#define RC_STEERING SERVO_PWM_3
+#define RC_LEFT_WHEEL BRUSHLESS_PWM_1
+#define RC_RIGHT_WHEEL BRUSHLESS_PWM_2
+#define RC_STEERING BRUSHLESS_PWM_3
 
 /*******************************************************************************
  * VARIABLES                                                                   *
@@ -58,18 +58,16 @@ mavlink_system_t mavlink_system = {
 };
 
 enum RC_channels {
+    SWITCH_D,
+    RUD,
+    ELE,
     THR,
     AIL,
-    ELE,
-    RUD,
+    HASH,
     SWITCH_A,
     SWITCH_B,
     SWITCH_C,
-    SWITCH_D,
-    SWITCH_E,
-    SWITCH_1,
-    SWITCH_F,
-    SWITCH_G,
+    SWITCH_E
 }; //map to the car controls from the RC receiver
 //enum RC_channels {
 //    ACCELERATOR = 2,
@@ -84,11 +82,11 @@ static struct GPS_data GPS_data;
 struct IMU_out IMU_raw = {0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0}; //container for raw IMU data
 struct IMU_out IMU_scaled = {0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0}; //container for scaled IMU data
 encoder_t encoder_data[NUM_ENCODERS];
-static uint8_t pub_GPS = TRUE;
-static uint8_t pub_RC_servo = FALSE;
+static uint8_t pub_GPS = FALSE;
+static uint8_t pub_RC_servo = TRUE;
 static uint8_t pub_RC_signals = TRUE;
-static uint8_t pub_IMU = TRUE;
-static uint8_t pub_Encoder = TRUE;
+static uint8_t pub_IMU = FALSE;
+static uint8_t pub_Encoder = FALSE;
 
 /*Pre-calculate float conversions*/
 static float omega_to_dist = WHEEL_RADIUS * 2 * M_PI / ENCODER_MAX_CTS;
@@ -492,30 +490,34 @@ void publish_RC_signals(void) {
  * @author Aaron Hunter
  */
 void publish_RC_signals_raw(void) {
-    mavlink_message_t msg_tx;
-    uint16_t msg_length;
-    uint8_t msg_buffer[BUFFER_SIZE];
-    uint16_t index = 0;
-    uint8_t RC_port = 0; //first 8 channels 
-    uint8_t rssi = 255; //unknown--may be able to extract from receiver
-    mavlink_msg_rc_channels_raw_pack(mavlink_system.sysid,
-            mavlink_system.compid,
-            &msg_tx,
-            Sys_timer_get_msec(),
-            RC_port,
-            RC_channels[0],
-            RC_channels[1],
-            RC_channels[2],
-            RC_channels[3],
-            RC_channels[4],
-            RC_channels[5],
-            RC_channels[6],
-            RC_channels[7],
-            rssi);
-    msg_length = mavlink_msg_to_send_buffer(msg_buffer, &msg_tx);
-    for (index = 0; index < msg_length; index++) {
-        Radio_put_char(msg_buffer[index]);
-    }
+    printf("%d, %d, %d, %d, %d, %d, %d, %d, %d \r",
+            RC_channels[0], RC_channels[1], RC_channels[2], RC_channels[3],
+            RC_channels[4], RC_channels[5], RC_channels[6], RC_channels[7],
+            RC_channels[8]);
+//    mavlink_message_t msg_tx;
+//    uint16_t msg_length;
+//    uint8_t msg_buffer[BUFFER_SIZE];
+//    uint16_t index = 0;
+//    uint8_t RC_port = 0; //first 8 channels 
+//    uint8_t rssi = 255; //unknown--may be able to extract from receiver
+//    mavlink_msg_rc_channels_raw_pack(mavlink_system.sysid,
+//            mavlink_system.compid,
+//            &msg_tx,
+//            Sys_timer_get_msec(),
+//            RC_port,
+//            RC_channels[0],
+//            RC_channels[1],
+//            RC_channels[2],
+//            RC_channels[3],
+//            RC_channels[4],
+//            RC_channels[5],
+//            RC_channels[6],
+//            RC_channels[7],
+//            rssi);
+//    msg_length = mavlink_msg_to_send_buffer(msg_buffer, &msg_tx);
+//    for (index = 0; index < msg_length; index++) {
+//        Radio_put_char(msg_buffer[index]);
+//    }
 }
 
 /**
@@ -633,7 +635,7 @@ static uint16_t calc_pw(uint16_t raw_counts) {
     int16_t normalized_pulse; //converted to microseconds and centered at 0
     uint16_t pulse_width; //servo output in microseconds
     normalized_pulse = (raw_counts - RC_RX_MID_COUNTS) >> CTS_2_USEC;
-    pulse_width = normalized_pulse + RC_SERVO_CENTER_PULSE;
+    pulse_width = normalized_pulse + RC_ESC_CENTER_PULSE;
     return pulse_width;
 }
 
@@ -654,18 +656,18 @@ void set_control_output(void) {
         if (debounce == 0) {
             // update pulsewidths for each servo output
             // we're using the elevator channel for accelerator 
-            RC_servo_set_pulse(calc_pw(RC_channels[ELE]), RC_LEFT_WHEEL);
-            RC_servo_set_pulse(calc_pw(RC_channels[ELE]), RC_RIGHT_WHEEL);
+            RC_ESC_set_pulse(calc_pw(RC_channels[ELE]), RC_LEFT_WHEEL);
+            RC_ESC_set_pulse(calc_pw(RC_channels[ELE]), RC_RIGHT_WHEEL);
             // and rudder for steering
-            RC_servo_set_pulse(calc_pw(RC_channels[RUD]), RC_STEERING);
+            RC_ESC_set_pulse(calc_pw(RC_channels[RUD]), RC_STEERING);
         }
     } else {
         debounce++;
         if (debounce >= bounces) {
             debounce = bounces;
-            RC_servo_set_pulse(calc_pw(RC_RX_MID_COUNTS), RC_LEFT_WHEEL);
-            RC_servo_set_pulse(calc_pw(RC_RX_MID_COUNTS), RC_RIGHT_WHEEL);
-            RC_servo_set_pulse(calc_pw(RC_RX_MID_COUNTS), RC_STEERING);
+            RC_ESC_set_pulse(calc_pw(RC_RX_MID_COUNTS), RC_LEFT_WHEEL);
+            RC_ESC_set_pulse(calc_pw(RC_RX_MID_COUNTS), RC_RIGHT_WHEEL);
+            RC_ESC_set_pulse(calc_pw(RC_RX_MID_COUNTS), RC_STEERING);
         }
     }
 }
@@ -691,31 +693,33 @@ int main(void) {
     while (cur_time < warmup_time) {
         cur_time = Sys_timer_get_msec();
     }
-    Radio_serial_init(); //start the radios
-    GPS_init();
+//    Radio_serial_init(); //start the radios
+//    GPS_init();
     RCRX_init(); //initialize the radio control system
     RC_channels_init(); //set channels to midpoint of RC system
     RC_ESC_init(ESC_UNIDIRECTIONAL_TYPE, RC_STEERING); // start the servo subsystem
-    IMU_state = IMU_init(IMU_SPI_MODE);
-    if (IMU_state == ERROR && IMU_retry > 0) {
-        IMU_state = IMU_init(IMU_SPI_MODE);
-        printf("IMU failed init, retrying %d \r\n", IMU_retry);
-        IMU_retry--;
-    }
-    Encoder_init();
+    RC_ESC_init(ESC_UNIDIRECTIONAL_TYPE, RC_LEFT_WHEEL);
+    RC_ESC_init(ESC_UNIDIRECTIONAL_TYPE, RC_RIGHT_WHEEL);
+//    IMU_state = IMU_init(IMU_SPI_MODE);
+//    if (IMU_state == ERROR && IMU_retry > 0) {
+//        IMU_state = IMU_init(IMU_SPI_MODE);
+//        printf("IMU failed init, retrying %d \r\n", IMU_retry);
+//        IMU_retry--;
+//    }
+//    Encoder_init();
     //initialize encoder data
-    for (index = 0; index < NUM_ENCODERS; index++) {
-        Encoder_init_encoder_data(&encoder_data[index]);
-    }
+//    for (index = 0; index < NUM_ENCODERS; index++) {
+//        Encoder_init_encoder_data(&encoder_data[index]);
+//    }
 
     printf("\r\nMinimal Mavlink application %s, %s \r\n", __DATE__, __TIME__);
 
     while (1) {
         cur_time = Sys_timer_get_msec();
         //check for all events
-        check_IMU_events(); //check for IMU data ready and publish when available
+//        check_IMU_events(); //check for IMU data ready and publish when available
 //        check_encoder_events(); //check for encoder data ready and publish when available
-        check_radio_events(); //detect and process MAVLink incoming messages
+//        check_radio_events(); //detect and process MAVLink incoming messages
         check_RC_events(); //check incoming RC commands
 //        check_GPS_events(); //check and process incoming GPS messages
 
@@ -734,20 +738,20 @@ int main(void) {
             if (pub_RC_signals == TRUE) {
                 publish_RC_signals_raw();
             }
-            if (pub_IMU == TRUE) {
-                publish_IMU_data(RAW);
-            }
+//            if (pub_IMU == TRUE) {
+//                publish_IMU_data(RAW);
+//            }
 //            if (pub_Encoder == TRUE) {
 //                publish_encoder_data();
 //            }
             /*start next data acquisition round*/
-            IMU_state = IMU_start_data_acq(); //initiate IMU measurement with SPI
-            if (IMU_state == ERROR) {
-                IMU_error++;
-                if (IMU_error % error_report == 0) {
-                    printf("IMU error count %d\r\n", IMU_error);
-                }
-            }
+//            IMU_state = IMU_start_data_acq(); //initiate IMU measurement with SPI
+//            if (IMU_state == ERROR) {
+//                IMU_error++;
+//                if (IMU_error % error_report == 0) {
+//                    printf("IMU error count %d\r\n", IMU_error);
+//                }
+//            }
         }
 
         //publish GPS
@@ -758,12 +762,12 @@ int main(void) {
 //            }
 //        }
         //publish heartbeat
-        if (cur_time - heartbeat_start_time >= HEARTBEAT_PERIOD) {
-            heartbeat_start_time = cur_time; //reset the timer
-            publish_heartbeat();
-            //            printf("RC_RX errors: %d\r", RCRX_get_err());
-
-        }
+//        if (cur_time - heartbeat_start_time >= HEARTBEAT_PERIOD) {
+//            heartbeat_start_time = cur_time; //reset the timer
+//            publish_heartbeat();
+//            //            printf("RC_RX errors: %d\r", RCRX_get_err());
+//
+//        }
     }
     return 0;
 }

@@ -593,8 +593,9 @@ int main(void) {
     if (GPS_test == TRUE) GPS_init();
 
     if (Unidirectional_test == TRUE || Bidirectional_test == TRUE) {
-        if (Unidirectional_test)
+        if (Unidirectional_test) {
             RC_ESC_init(ESC_UNIDIRECTIONAL_TYPE, BRUSHLESS_PWM_1);
+        }
         if (Bidirectional_test)
             RC_ESC_init(ESC_BIDIRECTIONAL_TYPE, BRUSHLESS_PWM_2);
         motor_start_time = Sys_timer_get_msec();
@@ -657,12 +658,12 @@ int main(void) {
 
         if (Unidirectional_test == TRUE || Bidirectional_test == TRUE || Servo_test == TRUE) {
             if (Unidirectional_test == TRUE) {
-                uni_direction = set_and_publish_pulse(TRUE, BRUSHLESS_PWM_1, uni_test_pulse, uni_direction, RC_ESC_CENTER_PULSE, RC_ESC_MIN_PULSE);
+                uni_direction = set_and_publish_pulse(FALSE, BRUSHLESS_PWM_1, uni_test_pulse, uni_direction, RC_ESC_CENTER_PULSE, RC_ESC_MIN_PULSE);
                 uni_test_pulse += uni_direction * 10;
             }
 
             if (Bidirectional_test == TRUE) {
-                bi_direction = set_and_publish_pulse(TRUE, BRUSHLESS_PWM_2, bi_test_pulse, bi_direction, RC_ESC_MAX_PULSE, RC_ESC_MIN_PULSE);
+                bi_direction = set_and_publish_pulse(FALSE, BRUSHLESS_PWM_2, bi_test_pulse, bi_direction, RC_ESC_MAX_PULSE, RC_ESC_MIN_PULSE);
                 bi_test_pulse += bi_direction * 10;
             }
 

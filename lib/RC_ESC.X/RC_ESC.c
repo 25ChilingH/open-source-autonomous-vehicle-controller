@@ -65,7 +65,7 @@ int8_t RC_ESC_init(uint8_t output_type, uint8_t output_channel) {
     T2CON = 0;
     TMR2 = 0x0;
     T2CONbits.TCKPS = 0b101; // prescaler set to 1:32
-    PR2 = 12499; //5 msec <=> 200 Hz; period = PB_CLOCK_FREQ / prescaler / 
+    PR2 = 49999; //20 msec <=> 50 Hz; period = PB_CLOCK_FREQ / prescaler / frequency
     /*setup timer2 interrupt on period rollover*/
     IPC2bits.T2IP = 0b110; //priority 6
     IPC2bits.T2IS = 0b10; // subpriority 2
@@ -88,8 +88,8 @@ int8_t RC_ESC_init(uint8_t output_type, uint8_t output_channel) {
             OC2CONbits.OC32 = 0; //16 bit mode
             OC2CONbits.OCTSEL = 0; //use timer 2
             OC2CONbits.OCM = 0b110; // PWM mode, no fault detection
-            OC2R = raw_ticks[BRUSHLESS_PWM_2]; // need load this register initially
-            OC2RS = raw_ticks[BRUSHLESS_PWM_2]; // OCxRS -> OCxR at timer rollover
+            OC2R = raw_ticks[BRUSHLESS_PWM_1]; // need load this register initially
+            OC2RS = raw_ticks[BRUSHLESS_PWM_1]; // OCxRS -> OCxR at timer rollover
             printf("OC2RS: %d\r\n", OC2RS);
             OC2CONbits.ON = 1; //turn on the peripheral
             break;

@@ -40,6 +40,7 @@
 !*.SLDASM
 !*.SLDPRT
 !*.STEP
+!*.css
 
 /lib/Mavlink_minimal.X/build/
 /lib/Mavlink_minimal.X/dist/

@@ -1,0 +1,224 @@
+html {
+    font-size: 100%;
+    box-sizing: border-box;
+  }
+  
+  *,
+  *:before,
+  *:after {
+    box-sizing: inherit;
+  }
+  
+  input, select, textarea, button{font-family:inherit;}
+  
+  
+  body {
+    height: 100 1.5em;
+    font-family: 'Gill Sans', sans-serif;
+    color: #fff;
+    background: black;
+    place-items: center;
+  }
+  
+  h1 {
+    /* font-family: 'Arial Black', sans-serif; */
+    font-size: 350%;
+    margin: 0;
+    line-height: 1.5;
+    text-align: center;
+  }
+  
+  h2 {
+    /* font-family: 'Arial Black', sans-serif; */
+    font-size: 300%;
+    margin: 0;
+    line-height: 1.5;
+    color: black;
+    text-align: center;
+  }
+  
+  p {
+    font-size: 100%;
+    margin: 0;
+    line-height: 1.5;
+    color: black;
+    text-align: center;
+  }
+  
+  hr {
+    overflow: visible;
+    /* For IE */
+    padding: 0;
+    border: none;
+    border-top: medium double white;
+    color: white;
+    text-align: center;
+  }
+  
+  hr:after {
+    content: "§";
+    display: inline-block;
+    position: relative;
+    top: -0.7em;
+    font-size: 1.5em;
+    padding: 0 0.25em;
+    background: black;
+  }
+  
+  /* container */
+  .padded-boxes {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 2rem;
+    margin: 3% 0 3% 0;
+  }
+  
+  /* boxes */
+  .padded-boxes>* {
+    width: 100%;
+    background: #fff;
+    border-radius: 2rem;
+    height: 400px;
+  }
+  
+  .padded-boxes>*:hover {
+    box-shadow: 0 15px 30px -15px #fff;
+  }
+  
+  /* headings */
+  .padded-boxes .heading {
+    background: #fff;
+    height: 300px;
+    padding: 2%;
+    border-radius: 2rem;
+  }
+  
+  /* submit button */
+  .button_submit {
+    width: 10em;
+    position: relative;
+    height: 3.5em;
+    border: 3px ridge #149CEA;
+    outline: none;
+    background-color: transparent;
+    color: white;
+    transition: 1s;
+    border-radius: 0.3em;
+    font-size: 16px;
+    font-weight: bold;
+  }
+  
+  .button_submit::after {
+    content: "";
+    position: absolute;
+    top: -10px;
+    left: 3%;
+    width: 95%;
+    height: 40%;
+    background-color: #212121;
+    transition: 0.5s;
+    transform-origin: center;
+  }
+  
+  .button_submit::before {
+    content: "";
+    transform-origin: center;
+    position: absolute;
+    top: 80%;
+    left: 3%;
+    width: 95%;
+    height: 40%;
+    background-color: #212121;
+    transition: 0.5s;
+  }
+  
+  .button_submit:hover::before,
+  .button_submit:hover::after {
+    transform: scale(0)
+  }
+  
+  .button_submit:hover {
+    box-shadow: inset 0px 0px 25px #1479EA;
+  }
+  
+  /* directory input */
+  input[type=text] {
+    width: 130px;
+    box-sizing: border-box;
+    border: 2px solid #ccc;
+    border-radius: 4px;
+    font-size: 16px;
+    background-color: white;
+    background-position: 10px 10px;
+    background-repeat: no-repeat;
+    padding: 12px 20px 12px 40px;
+    transition: width 0.4s ease-in-out;
+  }
+  
+  input[type=text]:focus {
+    width: 100%;
+  }
+  
+  /* button */
+  .multi-button {
+    display: flex;
+    border: 2px solid black;
+    border-radius: 5px;
+    box-shadow: 0px 0px 2px #000;
+    justify-content: center;
+  }
+  
+  .button {
+    font-size: 30px;
+    padding: 15px 25px;
+    background-color: #f6f6f6;
+    background: linear-gradient(#f6f6f6, transparent 155%);
+    color: black;
+    border-color: transparent;
+    outline: 0;
+    cursor: pointer;
+    transition: all 1s ease;
+  }
+  
+  .button_off {
+    font-size: 30px;
+    margin: 0;
+    padding: 15px 25px;
+    background-color: #7ae67a;
+    background: linear-gradient(#7ae67a, transparent 155%);
+    color: black;
+    border-color: transparent;
+    outline: 0;
+    cursor: pointer;
+    transition: all 1s ease;
+  }
+  
+  .button_dis {
+    font-size: 30px;
+    margin: 0;
+    padding: 15px 25px;
+    background-color: #ec3a3a;
+    background: linear-gradient(#ec3a3a, transparent 155%);
+    color: white;
+    border-color: transparent;
+    outline: 0;
+    cursor: pointer;
+    transition: all 1s ease;
+  }
+  
+  .button:hover {
+    background-color: #00ff08
+  }
+  
+  .button:active {
+    background-color: #3e8e41;
+    box-shadow: 0 5px #666;
+    transform: translateY(4px);
+  }
+  
+  /* tablet breakpoint */
+  @media (min-width:768px) {
+    .padded-boxes>* {
+      width: calc((100% - 4rem) / 3);
+    }
+  }

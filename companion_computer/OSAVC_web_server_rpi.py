@@ -12,7 +12,7 @@ from datetime import datetime, timedelta
 from threading import Thread
 from pymavlink import mavutil
 import csv
-from PositioningSystem_raspi.yolov5.detect import ObjectDetector
+from PositioningSystem.yolov5.detect import ObjectDetector
 
 
 app = Flask(__name__)
